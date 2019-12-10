@@ -60,7 +60,11 @@ public class BoardController : MonoBehaviour
         Lanes[pos.Lane].Objects[pos.Position] = null;
     }
 
-    public Vector2 GetPosition(RadialPosition pos) => Lanes[pos.Lane].Spaces[pos.Position];
+    public Vector2 GetPosition(RadialPosition pos)
+    {
+        print(pos.Lane + " " + pos.Position);
+        return Lanes[pos.Lane].Spaces[pos.Position];
+    } 
 
     public bool TryMove(GameObject obj, RadialPosition from, RadialPosition to)
     {
