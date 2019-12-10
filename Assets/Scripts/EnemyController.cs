@@ -33,7 +33,6 @@ public class EnemyController : MonoBehaviour
 [Serializable]
 public struct EnemyInfo
 {
-    public Sprite CardinalSprite;
-    public Sprite DiagonalSprite;
+    public Sprite Sprite;
     // TODO: Sound
 }

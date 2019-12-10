@@ -7,10 +7,24 @@ public class Player : MonoBehaviour
     public KeyCode CounterClockwise;
     public float WaitTime;
     public float MovementSharpness;
+    public AudioClip Movement;
+    public AudioClip Blocked;
 
     // Runtime
     public RadialPosition Position = new RadialPosition(0, 0);
-    public float Cooldown;
+    float Cooldown;
+    AudioSource audioSource;
+     
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    void Start()
+    {
+        BoardController.Instance.AddObject(gameObject, Position);
+    }
 
     void Update()
     {
@@ -29,12 +43,18 @@ public class Player : MonoBehaviour
 
         if (delta != 0)
         {
+
             var newPosition = new RadialPosition(Position.Lane + delta, 0);
             var moved = BoardController.Instance.TryMove(gameObject, Position, newPosition);
             if (moved)
             {
+                audioSource.PlayOneShot(Movement);
                 Position = newPosition;
                 Cooldown = WaitTime;
+            }
+            else
+            {
+                audioSource.PlayOneShot(Blocked);
             }
         }
     }

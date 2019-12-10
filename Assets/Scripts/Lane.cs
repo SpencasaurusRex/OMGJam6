@@ -59,14 +59,7 @@ public class Lane : MonoBehaviour
         newOrb.transform.position = BoardController.Instance.GetPosition(newOrb.Position);
         newOrb.Type = type;
         var info = EnemyController.Instance.EnemyInfo[type];
-        if (LaneIndex % 2 == 0)
-        {
-            newOrb.GetComponent<SpriteRenderer>().sprite = info.CardinalSprite;
-        }
-        else
-        {
-            newOrb.GetComponent<SpriteRenderer>().sprite = info.DiagonalSprite;
-        }
+        newOrb.GetComponent<SpriteRenderer>().sprite = info.Sprite;
 
         if (BoardController.Instance.TryMove(newOrb.gameObject, spawnPosition, movePosition))
         {

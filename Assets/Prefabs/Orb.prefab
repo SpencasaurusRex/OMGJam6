@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f7be43945fd8a146b75371f2e7fdf53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementSharpness: 10
+  MovementSharpness: 3
   Type: 0
 --- !u!212 &7129183561480825907
 SpriteRenderer:

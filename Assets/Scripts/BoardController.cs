@@ -14,6 +14,9 @@ public class BoardController : MonoBehaviour
     public Vector2 InitialDiagonal;
     public Vector2 OffsetDiagonal;
 
+    public Vector2 LastLaneDifferenceStraight;
+    public Vector2 LastLaneDifferenceDiagonal;
+
     // Runtime
     public List<BoardLane> Lanes = new List<BoardLane>();
 
@@ -32,12 +35,14 @@ public class BoardController : MonoBehaviour
             {
                 if (laneIndex % 2 == 0)
                 {
-                    Vector2 newPosition = (InitialStraight + OffsetStraight * position).Rotate(laneRotation);
+                    Vector2 extra = position == NUM_SPACES - 1 ? LastLaneDifferenceStraight : Vector2.zero;
+                    Vector2 newPosition = (InitialStraight + OffsetStraight * position + extra).Rotate(laneRotation);
                     lane.Add(newPosition);
                 }
                 else
                 {
-                    Vector2 newPosition = (InitialDiagonal + OffsetDiagonal * position).Rotate(laneRotation);
+                    Vector2 extra = position == NUM_SPACES - 1 ? LastLaneDifferenceDiagonal : Vector2.zero;
+                    Vector2 newPosition = (InitialDiagonal + OffsetDiagonal * position + extra).Rotate(laneRotation);
                     lane.Add(newPosition);
                 }
             }
