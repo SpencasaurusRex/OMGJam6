@@ -57,11 +57,20 @@ public class Lane : MonoBehaviour
         newOrb.Position = new RadialPosition(LaneIndex, BoardController.NUM_SPACES - 1);
         newOrb.transform.position = BoardController.Instance.GetPosition(newOrb.Position);
         newOrb.Type = type;
-        newOrb.GetComponent<SpriteRenderer>().sprite = EnemyController.Instance.EnemyInfo[type].Sprite;
+        var info = EnemyController.Instance.EnemyInfo[type];
+        if (LaneIndex % 2 == 0)
+        {
+            newOrb.GetComponent<SpriteRenderer>().sprite = info.CardinalSprite;
+        }
+        else
+        {
+            newOrb.GetComponent<SpriteRenderer>().sprite = info.DiagonalSprite;
+        }
+
     }
 
     int GetNextOrbType()
     {
-        return 0;
+        return Random.Range(0, EnemyController.Instance.AvailableTypes);
     }
 }

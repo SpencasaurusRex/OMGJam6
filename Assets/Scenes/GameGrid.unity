@@ -301,6 +301,53 @@ MonoBehaviour:
   WaitTime: 0.1
   MovementSharpness: 10
   Cooldown: 0
+--- !u!1 &962266909
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 962266910}
+  - component: {fileID: 962266911}
+  m_Layer: 0
+  m_Name: Lane (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &962266910
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 962266909}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2049602687}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &962266911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 962266909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6cde47cc9d699a42a016742ebc59e5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EnemyPrefab: {fileID: 6599878575697510283, guid: dbdd07888e66d6440b6965c8426ccf71,
+    type: 3}
+  StartingInterval: 1
+  LaneIndex: 1
 --- !u!1 &1263323905
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,7 +393,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnemyPrefab: {fileID: 6599878575697510283, guid: dbdd07888e66d6440b6965c8426ccf71,
     type: 3}
-  StartingInterval: 10
+  StartingInterval: 1
   LaneIndex: 0
 --- !u!1 &2049602685
 GameObject:
@@ -429,6 +476,7 @@ Transform:
   m_Children:
   - {fileID: 785863541}
   - {fileID: 1263323906}
+  - {fileID: 962266910}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -446,13 +494,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartingLanes: 
   EnemyInfo:
-  - Sprite: {fileID: 21300000, guid: 51c57f7072731ef4095d9d72b1c9b945, type: 3}
-  - Sprite: {fileID: 0}
-  - Sprite: {fileID: 0}
-  - Sprite: {fileID: 0}
-  - Sprite: {fileID: 0}
-  - Sprite: {fileID: 0}
-  AvailableTypes: 1
+  - CardinalSprite: {fileID: 21300000, guid: 7fef62babc1cc5c4f839f3c427f30c61, type: 3}
+    DiagonalSprite: {fileID: 21300000, guid: a05fac79c52fd54429646f02e954370d, type: 3}
+  - CardinalSprite: {fileID: 21300000, guid: 6e8293ec77aa2374d846724c3ec0634d, type: 3}
+    DiagonalSprite: {fileID: 21300000, guid: 7c86beadd952ddc49bca3db0b2bb9eea, type: 3}
+  - CardinalSprite: {fileID: 21300000, guid: dc8496d9b6d2b0f47849b3f921559553, type: 3}
+    DiagonalSprite: {fileID: 21300000, guid: be5abc7aebac64e44aa04eda8c1d1ead, type: 3}
+  - CardinalSprite: {fileID: 21300000, guid: 34665be44b863e649a0014fbdf418d0c, type: 3}
+    DiagonalSprite: {fileID: 0}
+  - CardinalSprite: {fileID: 21300000, guid: f19ff16177f07c744b51c335ebd5d436, type: 3}
+    DiagonalSprite: {fileID: 21300000, guid: 30b228d801959094bb65aa6c042dcbed, type: 3}
+  - CardinalSprite: {fileID: 21300000, guid: 4c5343689369a2d498ec554ec0f4bfbf, type: 3}
+    DiagonalSprite: {fileID: 21300000, guid: 71d6a2d1148dee9469956a23c2d6f5ae, type: 3}
+  AvailableTypes: 6
 --- !u!114 &2049602689
 MonoBehaviour:
   m_ObjectHideFlags: 0
