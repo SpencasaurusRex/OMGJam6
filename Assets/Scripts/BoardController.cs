@@ -5,7 +5,7 @@ using UnityEngine;
 public class BoardController : MonoBehaviour
 {
     public const int NUM_LANES = 8;
-    public const int NUM_SPACES = 8;
+    public const int NUM_SPACES = 9;
 
     // Configuration
     public Vector2 InitialStraight;
@@ -13,7 +13,6 @@ public class BoardController : MonoBehaviour
 
     public Vector2 InitialDiagonal;
     public Vector2 OffsetDiagonal;
-    public int LaneLength;
 
     // Runtime
     public List<BoardLane> Lanes = new List<BoardLane>();
@@ -24,12 +23,12 @@ public class BoardController : MonoBehaviour
     {
         Instance = this;
 
-        for (int laneIndex = 0; laneIndex < 8; laneIndex++)
+        for (int laneIndex = 0; laneIndex < NUM_LANES; laneIndex++)
         {
             var lane = new BoardLane();
             Lanes.Add(lane);
             float laneRotation = laneIndex / 2 * 90;
-            for (int position = 0; position < LaneLength; position++)
+            for (int position = 0; position < NUM_SPACES; position++)
             {
                 if (laneIndex % 2 == 0)
                 {
@@ -62,12 +61,12 @@ public class BoardController : MonoBehaviour
 
     public Vector2 GetPosition(RadialPosition pos)
     {
-        print(pos.Lane + " " + pos.Position);
         return Lanes[pos.Lane].Spaces[pos.Position];
     } 
 
     public bool TryMove(GameObject obj, RadialPosition from, RadialPosition to)
     {
+        if (from == to) return false;
         if (GetObject(to) == null)
         {
             RemoveObject(from);

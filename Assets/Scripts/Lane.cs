@@ -34,12 +34,7 @@ public class Lane : MonoBehaviour
     void SpawnEnemies()
     {
         var enemiesArray = Enemies.ToArray();
-        if (enemiesArray.Length > 0 && enemiesArray[0].Position.Position == 0)
-        {
-            // Lane is blocked.. no spawning :)
-            return;
-        }
-
+        
         foreach (var enemy in enemiesArray)
         {
             var newPosition = new RadialPosition(enemy.Position.Lane, enemy.Position.Position - 1);
@@ -49,12 +44,18 @@ public class Lane : MonoBehaviour
             }
         }
 
+        var movePosition = new RadialPosition(LaneIndex, BoardController.NUM_SPACES - 2);
+        var spawnPosition = new RadialPosition(LaneIndex, BoardController.NUM_SPACES - 1);
+
+        if (BoardController.Instance.GetObject(spawnPosition) != null) return;
+
         var newOrb = Instantiate(EnemyPrefab);
         Enemies.Enqueue(newOrb);
 
         int type = GetNextOrbType();
 
-        newOrb.Position = new RadialPosition(LaneIndex, BoardController.NUM_SPACES - 1);
+        newOrb.Position = spawnPosition;
+        BoardController.Instance.AddObject(newOrb.gameObject, spawnPosition);
         newOrb.transform.position = BoardController.Instance.GetPosition(newOrb.Position);
         newOrb.Type = type;
         var info = EnemyController.Instance.EnemyInfo[type];
@@ -67,6 +68,10 @@ public class Lane : MonoBehaviour
             newOrb.GetComponent<SpriteRenderer>().sprite = info.DiagonalSprite;
         }
 
+        if (BoardController.Instance.TryMove(newOrb.gameObject, spawnPosition, movePosition))
+        {
+            newOrb.Position = movePosition;
+        }
     }
 
     int GetNextOrbType()

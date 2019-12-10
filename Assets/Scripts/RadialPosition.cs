@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public class RadialPosition
+public class RadialPosition : IEquatable<RadialPosition>
 {
     public readonly int Lane;
     public readonly int Position;
@@ -10,5 +11,19 @@ public class RadialPosition
         Lane = lane % BoardController.NUM_LANES;
         if (Lane < 0) Lane += BoardController.NUM_LANES;
         Position = Mathf.Clamp(position, 0, BoardController.NUM_SPACES);
+    }
+
+    public bool Equals(RadialPosition other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        return Lane == other.Lane && Position == other.Position;
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (Lane * 397) ^ Position;
+        }
     }
 }
