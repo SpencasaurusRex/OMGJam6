@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
+using Vector2 = UnityEngine.Vector2;
 
 public class Lane : MonoBehaviour
 {
@@ -10,15 +13,45 @@ public class Lane : MonoBehaviour
     public Orb EnemyPrefab;
     public float StartingInterval;
     public int LaneIndex;
+    public BoardController BoardController;
 
     // Runtime;
+    [NonSerialized]
+    public Vector2[] Spaces = new Vector2[BoardController.NUM_SPACES];
+    [NonSerialized]
+    public GameObject[] Objects = new GameObject[BoardController.NUM_SPACES];
     float Cooldown;
     float Interval;
-    Queue<Orb> Enemies = new Queue<Orb>();
 
     void Awake()
     {
         Cooldown = Interval = StartingInterval;
+
+        List<Vector2> positions = new List<Vector2>();
+        float laneRotation = LaneIndex / 2 * 90;
+        for (int position = 0; position < BoardController.NUM_SPACES; position++)
+        {
+            Vector2 newPosition;
+            if (LaneIndex % 2 == 0)
+            {
+                Vector2 extra = position == BoardController.NUM_SPACES - 1
+                    ? BoardController.LastLaneDifferenceStraight
+                    : Vector2.zero;
+                newPosition =
+                    (BoardController.InitialStraight + BoardController.OffsetStraight * position + extra).Rotate(
+                        laneRotation);
+            }
+            else
+            {
+                Vector2 extra = position == BoardController.NUM_SPACES - 1
+                    ? BoardController.LastLaneDifferenceDiagonal
+                    : Vector2.zero;
+                newPosition =
+                    (BoardController.InitialDiagonal + BoardController.OffsetDiagonal * position + extra).Rotate(
+                        laneRotation);
+            }
+            Spaces[position] = newPosition;
+        }
     }
 
     void Update()
@@ -33,14 +66,17 @@ public class Lane : MonoBehaviour
 
     void SpawnEnemies()
     {
-        var enemiesArray = Enemies.ToArray();
-        
-        foreach (var enemy in enemiesArray)
+        // Move all orbs forward
+        foreach (var obj in Objects)
         {
-            var newPosition = new RadialPosition(enemy.Position.Lane, enemy.Position.Position - 1);
-            if (BoardController.Instance.TryMove(enemy.gameObject, enemy.Position, newPosition))
+            if (obj == null) continue;
+            if (obj.TryGetComponent<Orb>(out var orb))
             {
-                enemy.Position = newPosition;
+                var newPosition = new RadialPosition(orb.Position.Lane, orb.Position.Position - 1);
+                if (BoardController.Instance.TryMove(orb.gameObject, orb.Position, newPosition))
+                {
+                    orb.Position = newPosition;
+                }
             }
         }
 
@@ -49,17 +85,9 @@ public class Lane : MonoBehaviour
 
         if (BoardController.Instance.GetObject(spawnPosition) != null) return;
 
-        var newOrb = Instantiate(EnemyPrefab);
-        Enemies.Enqueue(newOrb);
-
         int type = GetNextOrbType();
-
-        newOrb.Position = spawnPosition;
-        BoardController.Instance.AddObject(newOrb.gameObject, spawnPosition);
-        newOrb.transform.position = BoardController.Instance.GetPosition(newOrb.Position);
-        newOrb.Type = type;
-        var info = EnemyController.Instance.EnemyInfo[type];
-        newOrb.GetComponent<SpriteRenderer>().sprite = info.Sprite;
+        var newOrb = EnemyController.Instance.CreateNewOrb(type, spawnPosition); 
+        Objects[BoardController.NUM_SPACES - 1] = newOrb.gameObject;
 
         if (BoardController.Instance.TryMove(newOrb.gameObject, spawnPosition, movePosition))
         {

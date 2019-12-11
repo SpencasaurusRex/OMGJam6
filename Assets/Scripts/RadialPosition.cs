@@ -1,10 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public class RadialPosition : IEquatable<RadialPosition>
 {
-    public readonly int Lane;
-    public readonly int Position;
+    public int Lane;
+    public int Position;
 
     public RadialPosition(int lane, int position)
     {
