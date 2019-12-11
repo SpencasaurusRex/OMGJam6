@@ -39,7 +39,7 @@ public class Laser : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.gameObject.TryGetComponent<Orb>(out var orb))
+        if (!hit && collider.gameObject.TryGetComponent<Orb>(out var orb))
         {
             OnLaserHit?.Invoke(orb);
             animator.SetBool("Hit", true);
