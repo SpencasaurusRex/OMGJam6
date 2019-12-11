@@ -9,11 +9,14 @@ public class Orb : MonoBehaviour
     public MovementType MovementType = MovementType.Sliding;
     public bool JustShot;
     public bool BounceBack;
+    public float BreakDelayAdd;
 
     // Runtime
     public int Type;
     public RadialPosition Position;
     AudioSource audioSource;
+    public bool Shattering;
+    public float ShatterCountdown;
 
     void Awake()
     {
@@ -24,6 +27,16 @@ public class Orb : MonoBehaviour
     {
         if (Position == null) return;
         var targetPosition = BoardController.Instance.GetPosition(Position, JustShot);
+
+        if (Shattering)
+        {
+            ShatterCountdown -= Time.deltaTime;
+            if (ShatterCountdown <= 0)
+            {
+                BoardController.Instance.Lanes[Position.Lane].Objects[Position.Position] = null;
+                Destroy(gameObject);
+            }
+        }
 
         if (MovementType == MovementType.Sliding)
         {
@@ -51,6 +64,12 @@ public class Orb : MonoBehaviour
                 MovementType = MovementType.Sliding;
             }
         }
+    }
+
+    public void Shatter(int delayMultiplier)
+    {
+        Shattering = true;
+        ShatterCountdown = delayMultiplier * BreakDelayAdd;
     }
 }
 public enum MovementType

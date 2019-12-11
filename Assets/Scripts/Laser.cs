@@ -5,8 +5,8 @@ public class Laser : MonoBehaviour
     public RadialPosition TargetPosition;
     public float Speed;
 
-    public delegate void LaserReachedDestination(RadialPosition pos);
-    public event LaserReachedDestination OnLaserReachedDestination;
+    public delegate void LaserHit(Orb orb);
+    public event LaserHit OnLaserHit;
     Animator animator;
 
     bool hit;
@@ -22,6 +22,10 @@ public class Laser : MonoBehaviour
         {
             var target = BoardController.Instance.GetPosition(TargetPosition, false) * 10;
             transform.localPosition = Vector2.MoveTowards(transform.localPosition, target, Speed * Time.deltaTime);
+            if (((Vector2)transform.localPosition - target).magnitude < .01f)
+            {
+                Destroy(gameObject);
+            }
         }
         else
         {
@@ -37,8 +41,7 @@ public class Laser : MonoBehaviour
     {
         if (collider.gameObject.TryGetComponent<Orb>(out var orb))
         {
-            print("Hit " + collider.gameObject.name);
-            OnLaserReachedDestination?.Invoke(TargetPosition);
+            OnLaserHit?.Invoke(orb);
             animator.SetBool("Hit", true);
             hit = true;
         }

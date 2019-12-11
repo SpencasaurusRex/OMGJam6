@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public float MovementSharpness;
     public AudioClip Movement;
     public AudioClip Blocked;
+    public AudioClip LaserSound;
     public int QueueSize = 5;
     public Laser LaserPrefab;
 
@@ -83,6 +84,7 @@ public class Player : MonoBehaviour
             orb.transform.localPosition = BoardController.Instance.GetPosition(Position, false);
             var sr = orb.GetComponent<SpriteRenderer>();
             sr.sprite = EnemyController.Instance.EnemyInfo[orb.Type].Sprite;
+            orb.GetComponent<BoxCollider2D>().enabled = true;
             orb.JustShot = true;
             orb.Position = new RadialPosition(Position.Lane, lastEmptySpace);
             BoardController.Instance.AddObject(orb.gameObject, orb.Position);
@@ -96,6 +98,9 @@ public class Player : MonoBehaviour
             var laser = Instantiate(LaserPrefab, spawnPosition, Quaternion.Euler(0, 0, degrees));
 
             laser.TargetPosition = new RadialPosition(Position.Lane, lastEmptySpace + 1);
+            audioSource.PlayOneShot(LaserSound);
+
+            laser.OnLaserHit += lane.LaserHit;
         }
     }
 

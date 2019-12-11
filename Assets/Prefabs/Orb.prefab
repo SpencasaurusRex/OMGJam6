@@ -50,10 +50,14 @@ MonoBehaviour:
   Speed: 20
   MovementType: 0
   JustShot: 0
+  BounceBack: 0
+  BreakDelayAdd: 0.1
   Type: 0
   Position:
     Lane: 0
     Position: 0
+  Shattering: 0
+  ShatterCountdown: 0
 --- !u!212 &7129183561480825907
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -116,7 +120,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: 29e8044f65cda9e42bb7da2c61d13464, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: 1.01
   Loop: 0
   Mute: 0
   Spatialize: 0

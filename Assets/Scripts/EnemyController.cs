@@ -32,7 +32,6 @@ public class EnemyController : MonoBehaviour
 
     public Orb CreateNewOrb(int type, RadialPosition position, bool logical)
     {
-        print("Create orb");
         var newOrb = Instantiate(OrbPrefab);
         if (position != null)
         {
@@ -48,7 +47,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            Destroy(newOrb.gameObject.GetComponent<Collider2D>());
+            newOrb.GetComponent<BoxCollider2D>().enabled = false;
         }
 
         return newOrb;

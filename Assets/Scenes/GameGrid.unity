@@ -670,6 +670,7 @@ MonoBehaviour:
   MovementSharpness: 15
   Movement: {fileID: 8300000, guid: 0fba1fc65d8472d4e99c37643ee7d260, type: 3}
   Blocked: {fileID: 8300000, guid: dcd212791c5de374e8b41d9d91967fe2, type: 3}
+  LaserSound: {fileID: 8300000, guid: ae1e78736abe186468de536cb8753e6c, type: 3}
   QueueSize: 5
   LaserPrefab: {fileID: 2275719523878523351, guid: 65479fde60461a640a715a9c3f9e0b91,
     type: 3}

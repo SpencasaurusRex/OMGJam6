@@ -117,4 +117,35 @@ public class Lane : MonoBehaviour
     {
         return Random.Range(0, EnemyController.Instance.AvailableTypes);
     }
+
+    public void LaserHit(Orb orb)
+    {
+        List<Orb> orbsToBreak = new List<Orb>();
+        int type = orb.Type;
+
+        for (int i = 0; i < Objects.Length; i++)
+        {
+            if (orbsToBreak.Count == 0)
+            {
+                if (Objects[i] == orb.gameObject)
+                {
+                    orbsToBreak.Add(orb);
+                }
+            }
+            else
+            {
+                if (Objects[i] == null) break;
+                if (Objects[i].TryGetComponent<Orb>(out var otherOrb) && otherOrb.Type == type)
+                {
+                    orbsToBreak.Add(otherOrb);
+                }
+                else break;
+            }
+        }
+
+        for (int i = 0; i < orbsToBreak.Count; i++)
+        {
+            orbsToBreak[i].Shatter(i);
+        }
+    }
 }
