@@ -44,7 +44,7 @@ public class BoardController : MonoBehaviour
         Lanes[pos.Lane].Objects[pos.Position] = null;
     }
 
-    public Vector2 GetPosition(RadialPosition pos, bool shouldBump)
+    public Vector2 GetPosition(RadialPosition pos, bool shouldBump = false)
     {
         var vec = Lanes[pos.Lane].Spaces[pos.Position];
         if (shouldBump)

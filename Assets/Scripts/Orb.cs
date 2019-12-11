@@ -8,6 +8,7 @@ public class Orb : MonoBehaviour
     public float Speed;
     public MovementType MovementType = MovementType.Sliding;
     public bool JustShot;
+    public bool BounceBack;
 
     // Runtime
     public int Type;
@@ -30,7 +31,7 @@ public class Orb : MonoBehaviour
         }
         else if (MovementType == MovementType.Shooting)
         {
-            transform.position = Vector2.MoveTowards(transform.position, targetPosition, Speed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, targetPosition, Speed * Time.deltaTime * (BounceBack ? .3f : 1));
         }
 
         if (((Vector2)transform.localPosition - targetPosition).magnitude <= .01f)
@@ -42,6 +43,12 @@ public class Orb : MonoBehaviour
                 {
                     audioSource.Play();
                 }
+                BounceBack = true;
+            }
+            else if (BounceBack)
+            {
+                BounceBack = false;
+                MovementType = MovementType.Sliding;
             }
         }
     }

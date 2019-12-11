@@ -30,8 +30,9 @@ public class EnemyController : MonoBehaviour
         
     }
 
-    public Orb CreateNewOrb(int type, RadialPosition position, bool logical = false)
+    public Orb CreateNewOrb(int type, RadialPosition position, bool logical)
     {
+        print("Create orb");
         var newOrb = Instantiate(OrbPrefab);
         if (position != null)
         {
@@ -44,6 +45,10 @@ public class EnemyController : MonoBehaviour
         if (!logical)
         {
             newOrb.GetComponent<SpriteRenderer>().sprite = info.Sprite;
+        }
+        else
+        {
+            Destroy(newOrb.gameObject.GetComponent<Collider2D>());
         }
 
         return newOrb;

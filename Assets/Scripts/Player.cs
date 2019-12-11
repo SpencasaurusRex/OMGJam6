@@ -7,11 +7,13 @@ public class Player : MonoBehaviour
     public KeyCode Clockwise;
     public KeyCode CounterClockwise;
     public KeyCode LaunchOrb;
+    public KeyCode Laser;
     public float WaitTime;
     public float MovementSharpness;
     public AudioClip Movement;
     public AudioClip Blocked;
     public int QueueSize = 5;
+    public Laser LaserPrefab;
 
     // Runtime
     public RadialPosition Position = new RadialPosition(0, 0);
@@ -65,22 +67,11 @@ public class Player : MonoBehaviour
             }
         }
 
+        Lane lane = BoardController.Instance.Lanes[Position.Lane];
+        int lastEmptySpace = lane.GetLastEmptySpace();
+
         if (Input.GetKeyDown(LaunchOrb))
         {
-            Lane lane = BoardController.Instance.Lanes[Position.Lane];
-            int lastEmptySpace = -1;
-            for (int i = 1; i < lane.Spaces.Length; i++)
-            {
-                if (lane.Objects[i] == null)
-                {
-                    lastEmptySpace = i;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
             if (lastEmptySpace == -1)
             {
                 audioSource.PlayOneShot(Blocked);
@@ -97,6 +88,14 @@ public class Player : MonoBehaviour
             BoardController.Instance.AddObject(orb.gameObject, orb.Position);
 
             CreateOrb();
+        }
+        else if (Input.GetKeyDown(Laser))
+        {
+            var spawnPosition = BoardController.Instance.GetPosition(Position);
+            float degrees = Position.Lane / 8f * 360;
+            var laser = Instantiate(LaserPrefab, spawnPosition, Quaternion.Euler(0, 0, degrees));
+
+            laser.TargetPosition = new RadialPosition(Position.Lane, lastEmptySpace + 1);
         }
     }
 

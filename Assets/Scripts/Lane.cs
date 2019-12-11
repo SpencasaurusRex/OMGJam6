@@ -86,13 +86,31 @@ public class Lane : MonoBehaviour
         if (BoardController.Instance.GetObject(spawnPosition) != null) return;
 
         int type = GetNextOrbType();
-        var newOrb = EnemyController.Instance.CreateNewOrb(type, spawnPosition); 
+        var newOrb = EnemyController.Instance.CreateNewOrb(type, spawnPosition, false); 
         Objects[BoardController.NUM_SPACES - 1] = newOrb.gameObject;
 
         if (BoardController.Instance.TryMove(newOrb.gameObject, spawnPosition, movePosition))
         {
             newOrb.Position = movePosition;
         }
+    }
+
+    public int GetLastEmptySpace()
+    {
+        int lastEmptySpace = -1;
+        for (int i = 1; i < Spaces.Length; i++)
+        {
+            if (Objects[i] == null)
+            {
+                lastEmptySpace = i;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return lastEmptySpace;
     }
 
     int GetNextOrbType()

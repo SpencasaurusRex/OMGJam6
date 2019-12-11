@@ -11,7 +11,7 @@ public class RadialPosition : IEquatable<RadialPosition>
     {
         Lane = lane % BoardController.NUM_LANES;
         if (Lane < 0) Lane += BoardController.NUM_LANES;
-        Position = Mathf.Clamp(position, 0, BoardController.NUM_SPACES);
+        Position = Mathf.Clamp(position, 0, BoardController.NUM_SPACES - 1);
     }
 
     public bool Equals(RadialPosition other)
