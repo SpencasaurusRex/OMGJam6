@@ -10,6 +10,7 @@ public class Orb : MonoBehaviour
     public bool JustShot;
     public bool BounceBack;
     public float BreakDelayAdd;
+    public PitchVariance Pitch;
 
     // Runtime
     public int Type;
@@ -21,6 +22,7 @@ public class Orb : MonoBehaviour
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+        Pitch = GetComponent<PitchVariance>();
     }
 
     void Update()
@@ -54,6 +56,7 @@ public class Orb : MonoBehaviour
                 JustShot = false;
                 if (Position.Position < BoardController.NUM_SPACES - 1)
                 {
+                    audioSource.pitch = Pitch.GetRandomPitch();
                     audioSource.Play();
                 }
                 BounceBack = true;

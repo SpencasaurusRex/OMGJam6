@@ -11,16 +11,16 @@ public class Player : MonoBehaviour
     public KeyCode Swap;
     public float WaitTime;
     public float MovementSharpness;
-    public AudioClip Movement;
-    public AudioClip Blocked;
-    public AudioClip LaserSound;
     public int QueueSize = 5;
     public Laser LaserPrefab;
+    public AudioSource LaserSource;
+    public AudioSource BlockedSource;
 
     // Runtime
+    PitchVariance pitchVariance;
     public RadialPosition Position = new RadialPosition(0, 0);
     float Cooldown;
-    AudioSource audioSource;
+    AudioSource movementSource;
     
     Queue<int> ShootOrbs = new Queue<int>();
     int StoredType;
@@ -33,7 +33,8 @@ public class Player : MonoBehaviour
 
     void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
+        movementSource = GetComponent<AudioSource>();
+        pitchVariance = GetComponent<PitchVariance>();
     }
 
     void Start()
@@ -67,13 +68,15 @@ public class Player : MonoBehaviour
             var moved = BoardController.Instance.TryMove(gameObject, Position, newPosition);
             if (moved)
             {
-                audioSource.PlayOneShot(Movement);
+                movementSource.pitch = pitchVariance.GetRandomPitch();
+                movementSource.Play();
                 Position = newPosition;
                 Cooldown = WaitTime;
             }
             else
             {
-                audioSource.PlayOneShot(Blocked);
+                BlockedSource.pitch = pitchVariance.GetRandomPitch();
+                BlockedSource.Play();
             }
         }
 
@@ -84,7 +87,8 @@ public class Player : MonoBehaviour
         {
             if (lastEmptySpace == -1)
             {
-                audioSource.PlayOneShot(Blocked);
+                BlockedSource.pitch = pitchVariance.GetRandomPitch();
+                BlockedSource.Play();
                 return;
             }
 
@@ -107,7 +111,8 @@ public class Player : MonoBehaviour
             var laser = Instantiate(LaserPrefab, spawnPosition, Quaternion.Euler(0, 0, degrees));
 
             laser.TargetPosition = new RadialPosition(Position.Lane, lastEmptySpace + 1);
-            audioSource.PlayOneShot(LaserSound);
+            LaserSource.pitch = pitchVariance.GetRandomPitch();
+            LaserSource.Play();
 
             laser.OnLaserHit += lane.LaserHit;
         }
