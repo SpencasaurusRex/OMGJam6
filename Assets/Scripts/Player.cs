@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public KeyCode CounterClockwise;
     public KeyCode LaunchOrb;
     public KeyCode Laser;
+    public KeyCode Swap;
     public float WaitTime;
     public float MovementSharpness;
     public AudioClip Movement;
@@ -20,7 +21,15 @@ public class Player : MonoBehaviour
     public RadialPosition Position = new RadialPosition(0, 0);
     float Cooldown;
     AudioSource audioSource;
-    Queue<Orb> ShootOrbs = new Queue<Orb>();
+    
+    Queue<int> ShootOrbs = new Queue<int>();
+    int StoredType;
+
+    public delegate void ShootOrb(int[] newTypes);
+    public event ShootOrb OnShootOrb;
+
+    public delegate void SwapStore(int newStoreType, int newFrontType);
+    public event SwapStore OnSwapStore;
 
     void Awake()
     {
@@ -33,7 +42,7 @@ public class Player : MonoBehaviour
 
         for (int i = 0; i < QueueSize; i++)
         {
-            CreateOrb();
+            ShootOrbs.Enqueue(GetNextType());
         }
     }
 
@@ -80,16 +89,16 @@ public class Player : MonoBehaviour
             }
 
             // Shoot orb
-            var orb = ShootOrbs.Dequeue();
+            int type = ShootOrbs.Dequeue();
+            var orb = EnemyController.Instance.CreateNewOrb(type, null);
             orb.transform.localPosition = BoardController.Instance.GetPosition(Position, false);
-            var sr = orb.GetComponent<SpriteRenderer>();
-            sr.sprite = EnemyController.Instance.EnemyInfo[orb.Type].Sprite;
-            orb.GetComponent<BoxCollider2D>().enabled = true;
+            orb.MovementType = MovementType.Shooting;
             orb.JustShot = true;
             orb.Position = new RadialPosition(Position.Lane, lastEmptySpace);
             BoardController.Instance.AddObject(orb.gameObject, orb.Position);
 
-            CreateOrb();
+            ShootOrbs.Enqueue(GetNextType());
+            OnShootOrb?.Invoke(ShootOrbs.ToArray());
         }
         else if (Input.GetKeyDown(Laser))
         {
@@ -102,6 +111,22 @@ public class Player : MonoBehaviour
 
             laser.OnLaserHit += lane.LaserHit;
         }
+
+        if (Input.GetKeyDown(Swap))
+        {
+            int oldFront = ShootOrbs.Peek();
+
+            for (int i = 0; i < ShootOrbs.Count; i++)
+            {
+                var old = ShootOrbs.Dequeue();
+                if (i == 0) ShootOrbs.Enqueue(StoredType);
+                else ShootOrbs.Enqueue(old);
+            }
+
+            OnSwapStore?.Invoke(oldFront, StoredType);
+            
+            StoredType = oldFront;
+        }
     }
 
     public int GetNextType()
@@ -109,11 +134,4 @@ public class Player : MonoBehaviour
         return Random.Range(0, EnemyController.Instance.AvailableTypes);
     }
 
-    public void CreateOrb()
-    {
-        int type = GetNextType();
-        var orb = EnemyController.Instance.CreateNewOrb(type, null, true);
-        orb.MovementType = MovementType.Shooting;
-        ShootOrbs.Enqueue(orb);
-    }
 }
