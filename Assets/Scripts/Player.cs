@@ -105,6 +105,7 @@ public class Player : MonoBehaviour
                 float degrees = position.Lane / 8f * 360;
                 var laser = Instantiate(LaserPrefab, spawnPosition, Quaternion.Euler(0, 0, degrees));
 
+                laser.player = this;
                 laser.TargetPosition = new RadialPosition(position.Lane, lastEmptySpace + 1);
                 LaserSource.pitch = pitchVariance.GetRandomPitch();
                 LaserSource.Play();
@@ -131,5 +132,10 @@ public class Player : MonoBehaviour
     public int GetNextType()
     {
         return Random.Range(0, WaveController.Instance.AvailableTypes - 1);
+    }
+
+    public void ChargeGun(int chainLength)
+    {
+        Charge = Mathf.Min(Charge + Mathf.Max(chainLength - 2, 0), 8);
     }
 }

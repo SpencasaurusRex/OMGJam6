@@ -5,6 +5,7 @@ public class Laser : MonoBehaviour
 {
     public RadialPosition TargetPosition;
     public float Speed;
+    public Player player;
 
     public delegate void LaserHit(Orb orb);
     public event LaserHit OnLaserHit;
@@ -66,6 +67,8 @@ public class Laser : MonoBehaviour
             {
                 orbsToBreak[i].Shatter(i);
             }
+
+            player.ChargeGun(orbsToBreak.Count);
         }
     }
 }
