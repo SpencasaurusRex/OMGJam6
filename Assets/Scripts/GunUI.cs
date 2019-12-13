@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,8 @@ public class GunUI : MonoBehaviour
     public List<Sprite> LargeOrbs;
     public Image SuperShotIndicator;
     public List<Sprite> SuperShotSprites;
+    public List<Image> BulletIndicators;
+    public RectTransform BulletCharge;
 
     // Runtime 
     float SwapSize = 1.0f;
@@ -78,6 +81,14 @@ public class GunUI : MonoBehaviour
         }
 
         SuperShotIndicator.sprite = SuperShotSprites[Player.Charge];
+
+        for (int i = 0; i < 4; i++)
+        {
+            BulletIndicators[i].enabled = i < Player.BulletsLeft;
+        }
+
+        float amount = Player.BulletsLeft + Player.BulletRechargeAmount;
+        BulletCharge.localScale = new Vector2(amount / 4, 1);
     }
 
 }

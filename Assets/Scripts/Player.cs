@@ -13,13 +13,18 @@ public class Player : MonoBehaviour
     public Laser LaserPrefab;
     public AudioSource LaserSource;
     public AudioSource BlockedSource;
+    public float BulletRechargeTime;
+    public List<Sprite> PlayerSprites;
 
     // Runtime
     PitchVariance pitchVariance;
     public int Charge;
+    public int BulletsLeft;
+    public float BulletRechargeAmount;
     AudioSource movementSource;
     BoardMover boardMover;
-    
+    SpriteRenderer sr;
+
     Queue<int> ShootOrbs = new Queue<int>();
     int StoredType;
 
@@ -34,11 +39,13 @@ public class Player : MonoBehaviour
         boardMover = GetComponent<BoardMover>();
         movementSource = GetComponent<AudioSource>();
         pitchVariance = GetComponent<PitchVariance>();
+        sr = GetComponent<SpriteRenderer>();
     }
 
     void Start()
     {
         BoardController.Instance.AddMover(GetComponent<BoardMover>(), new RadialPosition(0, 0));
+        sr.sprite = PlayerSprites[0];
 
         for (int i = 0; i < QueueSize; i++)
         {
@@ -47,10 +54,23 @@ public class Player : MonoBehaviour
 
         OnShootOrb?.Invoke(ShootOrbs.ToArray());
         OnSwapStore?.Invoke(StoredType, ShootOrbs.Peek(), true);
+
+        BulletsLeft = 4;
+
     }
 
     void Update()
     {
+        if (BulletsLeft < 4)
+        {
+            BulletRechargeAmount += Time.deltaTime / BulletRechargeTime;
+            if (BulletRechargeAmount > 1)
+            {
+                BulletsLeft++;
+                BulletRechargeAmount = 0;
+            }
+        }
+
         // Input
         int delta = 0;
         if (Input.GetKeyDown(Clockwise)) delta--;
@@ -65,6 +85,7 @@ public class Player : MonoBehaviour
             {
                 movementSource.pitch = pitchVariance.GetRandomPitch();
                 movementSource.Play();
+                sr.sprite = PlayerSprites[newPosition.Lane];
             }
             else
             {
@@ -99,8 +120,10 @@ public class Player : MonoBehaviour
                 // Super charge!
 
             }
-            else
+            else if (BulletsLeft > 0)
             {
+                BulletsLeft--;
+
                 var spawnPosition = BoardController.Instance.GetPosition(position);
                 float degrees = position.Lane / 8f * 360;
                 var laser = Instantiate(LaserPrefab, spawnPosition, Quaternion.Euler(0, 0, degrees));
