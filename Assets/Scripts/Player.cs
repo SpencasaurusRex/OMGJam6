@@ -13,8 +13,9 @@ public class Player : MonoBehaviour
     public KeyCode SuperShot;
     public int QueueSize = 5;
     public Laser LaserPrefab;
-    public AudioSource LaserSource;
-    public AudioSource BlockedSource;
+    public AudioClip MovementClip;
+    public AudioClip LaserClip;
+    public AudioClip BlockedClip;
     public float BulletRechargeTime;
     public List<Sprite> PlayerSprites;
 
@@ -23,7 +24,6 @@ public class Player : MonoBehaviour
     public int Charge;
     public int BulletsLeft;
     public float BulletRechargeAmount;
-    AudioSource movementSource;
     BoardMover boardMover;
     SpriteRenderer sr;
 
@@ -39,15 +39,17 @@ public class Player : MonoBehaviour
     void Awake()
     {
         boardMover = GetComponent<BoardMover>();
-        movementSource = GetComponent<AudioSource>();
         pitchVariance = GetComponent<PitchVariance>();
         sr = GetComponent<SpriteRenderer>();
     }
 
     void Start()
     {
-        BoardController.Instance.AddMover(GetComponent<BoardMover>(), new RadialPosition(0, 0));
-        sr.sprite = PlayerSprites[0];
+        boardMover.enabled = true;
+
+        var startingPos = new RadialPosition(2, 0);
+        BoardController.Instance.AddMover(GetComponent<BoardMover>(), startingPos);
+        sr.sprite = PlayerSprites[startingPos.Lane];
 
         for (int i = 0; i < QueueSize; i++)
         {
@@ -85,14 +87,12 @@ public class Player : MonoBehaviour
             var newPosition = new RadialPosition(position.Lane + delta, 0);
             if (BoardController.Instance.TryMove(boardMover, newPosition))
             {
-                movementSource.pitch = pitchVariance.GetRandomPitch();
-                movementSource.Play();
+                Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch());
                 sr.sprite = PlayerSprites[newPosition.Lane];
             }
             else
             {
-                BlockedSource.pitch = pitchVariance.GetRandomPitch();
-                BlockedSource.Play();
+                Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch());
             }
         }
 
@@ -103,8 +103,7 @@ public class Player : MonoBehaviour
         {
             if (lastEmptySpace == 0)
             {
-                BlockedSource.pitch = pitchVariance.GetRandomPitch();
-                BlockedSource.Play();
+                Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch());
                 return;
             }
 
@@ -127,13 +126,15 @@ public class Player : MonoBehaviour
 
                 laser.player = this;
                 laser.TargetPosition = new RadialPosition(position.Lane, lastEmptySpace + 1);
-                LaserSource.pitch = pitchVariance.GetRandomPitch();
-                LaserSource.Play();
+                Factory.Instance.PlaySound(LaserClip, pitchVariance.GetRandomPitch());
             }
         }
         else if (Input.GetKeyDown(SuperShot) && Charge == 8)
         {
             Charge = 0;
+
+            Factory.Instance.CreateSuperShotLaser(position.Lane);
+            Factory.Instance.CreateCampfireBlast();
             var movers = BoardController.Instance.GetLane(position.Lane).Where(x => x != null);
             
             foreach (var mover in movers)

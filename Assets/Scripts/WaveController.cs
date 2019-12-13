@@ -12,7 +12,13 @@ public class WaveController : MonoBehaviour
     float timer;
     List<float> laneCountDowns;
     List<int> lastLaneType;
+
+    public int LanesLeft;
+    public int SpacesLeft;
+
     public static WaveController Instance { get; private set; }
+
+    const int TOTAL_SPACES = BoardController.NUM_LANES * BoardController.NUM_SPACES;
 
     void Awake()
     {
@@ -29,15 +35,37 @@ public class WaveController : MonoBehaviour
 
     void Update()
     {
+        SpacesLeft = TOTAL_SPACES;
+        LanesLeft = BoardController.NUM_LANES;
+        for (int lane = 0; lane < BoardController.NUM_LANES; lane++)
+        {
+            for (int space = 0; space < BoardController.NUM_SPACES; space++)
+            {
+                if (BoardController.Instance.GetMover(new RadialPosition(lane, space)) != null)
+                {
+                    SpacesLeft--;
+                    if (space == 0)
+                    {
+                        LanesLeft--;
+                    }
+                }
+            }
+        }
+
         for (int lane = 0; lane < ActivateTimes.Length; lane++)
         {
             var position = new RadialPosition(lane, BoardController.NUM_SPACES - 1);
             laneCountDowns[lane] -= Time.deltaTime;
             if (laneCountDowns[lane] <= 0)
             {
-                laneCountDowns[lane] = LaneSpawnTime;
+                laneCountDowns[lane] = LaneSpawnTime * ((float)LanesLeft / (BoardController.NUM_LANES - 1));
                 SpawnOrb(position);
             }
+        }
+
+        if (SpacesLeft <= 1)
+        {
+            GameController.Instance.EndGame();
         }
     }
 

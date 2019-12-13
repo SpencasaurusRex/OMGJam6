@@ -7,6 +7,9 @@ public class Factory : MonoBehaviour
     public Sprite[] LargeOrbSprites;
     public Sound SoundPrefab;
     public Color[] OrbColors;
+    public Vector2[] SuperShotLaserPositions;
+    public Transform SuperShotLaserPrefab;
+    public Transform CampfireBlastPrefab;
 
     public Orb OrbPrefab;
 
@@ -53,5 +56,15 @@ public class Factory : MonoBehaviour
         var sound = Instantiate(SoundPrefab);
         sound.Clip = clip;
         sound.Pitch = pitch;
+    }
+
+    public void CreateSuperShotLaser(int lane)
+    {
+        Instantiate(SuperShotLaserPrefab, SuperShotLaserPositions[lane], Quaternion.Euler(0, 0, (lane - 2) * 45));
+    }
+
+    public void CreateCampfireBlast()
+    {
+        Instantiate(CampfireBlastPrefab);
     }
 }
