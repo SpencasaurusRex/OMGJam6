@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public Laser LaserPrefab;
     public AudioSource LaserSource;
     public AudioSource BlockedSource;
+    public GunUI GunUI;
 
     // Runtime
     PitchVariance pitchVariance;
@@ -45,6 +46,8 @@ public class Player : MonoBehaviour
         {
             ShootOrbs.Enqueue(GetNextType());
         }
+
+        OnShootOrb?.Invoke(ShootOrbs.ToArray());
     }
 
     void Update()
@@ -114,7 +117,15 @@ public class Player : MonoBehaviour
             LaserSource.pitch = pitchVariance.GetRandomPitch();
             LaserSource.Play();
 
-            laser.OnLaserHit += lane.LaserHit;
+            if (GunUI.Charge == 8)
+            {
+                // Super charge!
+                laser.OnLaserHit += lane.SuperChargeHit;
+            }
+            else
+            {
+                laser.OnLaserHit += lane.LaserHit;
+            }
         }
 
         if (Input.GetKeyDown(Swap))

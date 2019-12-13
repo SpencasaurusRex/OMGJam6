@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = System.Object;
 using Random = UnityEngine.Random;
 using Vector2 = UnityEngine.Vector2;
 
@@ -14,6 +15,7 @@ public class Lane : MonoBehaviour
     public float StartingInterval;
     public int LaneIndex;
     public BoardController BoardController;
+    public GunUI gunUI;
 
     // Runtime;
     [NonSerialized]
@@ -120,6 +122,16 @@ public class Lane : MonoBehaviour
 
     public void LaserHit(Orb orb)
     {
+        LaserHit(orb, false);
+    }
+
+    public void SuperChargeHit(Orb orb)
+    {
+        LaserHit(orb, true);
+    }
+
+    void LaserHit(Orb orb, bool superCharge)
+    {
         List<Orb> orbsToBreak = new List<Orb>();
         int type = orb.Type;
 
@@ -130,6 +142,14 @@ public class Lane : MonoBehaviour
                 if (Objects[i] == orb.gameObject)
                 {
                     orbsToBreak.Add(orb);
+                }
+            }
+            else if (superCharge)
+            {
+                if (Objects[i] == null) continue;
+                if (Objects[i].TryGetComponent<Orb>(out var otherOrb))
+                {
+                    orbsToBreak.Add(otherOrb);
                 }
             }
             else
@@ -147,5 +167,6 @@ public class Lane : MonoBehaviour
         {
             orbsToBreak[i].Shatter(i);
         }
+        gunUI.ChainBreak(orbsToBreak.Count);
     }
 }

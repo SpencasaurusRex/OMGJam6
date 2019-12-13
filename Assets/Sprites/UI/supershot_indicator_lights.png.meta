@@ -7,28 +7,31 @@ TextureImporter:
     second: supershot_indicator_lights_0
   - first:
       213: 2777030446626326159
-    second: supershot_indicator_lights_1
+    second: supershot_indicator_lights_0
   - first:
       213: -4243576960077562137
-    second: supershot_indicator_lights_2
+    second: supershot_indicator_lights_0
   - first:
       213: -2189918203886687950
-    second: supershot_indicator_lights_3
+    second: supershot_indicator_lights_0
   - first:
       213: 362952703875456712
-    second: supershot_indicator_lights_4
+    second: supershot_indicator_lights_0
   - first:
       213: 4762614908474421036
-    second: supershot_indicator_lights_5
+    second: supershot_indicator_lights_0
   - first:
       213: -4522946039330864700
-    second: supershot_indicator_lights_6
+    second: supershot_indicator_lights_0
   - first:
       213: -8319759607621040468
-    second: supershot_indicator_lights_7
+    second: supershot_indicator_lights_0
   - first:
       213: -8177988605750640897
-    second: supershot_indicator_lights_8
+    second: supershot_indicator_lights_0
+  - first:
+      213: -5161678637468315988
+    second: supershot_indicator_lights_0
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -125,27 +128,6 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: supershot_indicator_lights_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 33
-        height: 33
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3c60d5565c4d5cb4f899bc42c01c2e5b
-      internalID: 5665460774518194155
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: supershot_indicator_lights_1
       rect:
         serializedVersion: 2
@@ -154,14 +136,14 @@ TextureImporter:
         width: 33
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b1e9e2119c6c657458b15c0740e1431e
-      internalID: 2777030446626326159
+      spriteID: 92c6b8b219cda2e48be6e24f387a6537
+      internalID: 5665460774518194155
       vertices: []
       indices: 
       edges: []
@@ -175,14 +157,14 @@ TextureImporter:
         width: 33
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a11a2b6ae79503d4986d37668fe5477d
-      internalID: -4243576960077562137
+      spriteID: c4e8dad1fa2b2404c9e6efc2513a3ce5
+      internalID: 2777030446626326159
       vertices: []
       indices: 
       edges: []
@@ -196,14 +178,14 @@ TextureImporter:
         width: 33
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e094532129161434c97928fdf7ce0bb3
-      internalID: -2189918203886687950
+      spriteID: 5f3de15c9ed2f734588259ccc044fc78
+      internalID: -4243576960077562137
       vertices: []
       indices: 
       edges: []
@@ -217,14 +199,14 @@ TextureImporter:
         width: 33
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6d18de3862ea8254da875781f8a90584
-      internalID: 362952703875456712
+      spriteID: e9e94d3bde186ce418faacfd721ebbb8
+      internalID: -2189918203886687950
       vertices: []
       indices: 
       edges: []
@@ -238,14 +220,14 @@ TextureImporter:
         width: 33
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d05ddabbdee14e84ea0f1e89d3c579f3
-      internalID: 4762614908474421036
+      spriteID: 3a2297263bd8b8f42b939ac892e781d2
+      internalID: 362952703875456712
       vertices: []
       indices: 
       edges: []
@@ -259,14 +241,14 @@ TextureImporter:
         width: 33
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 686f856a5d1c8b2489f2c8994b377953
-      internalID: -4522946039330864700
+      spriteID: d9e806af3525f3b408cf34cbac2aa0c3
+      internalID: 4762614908474421036
       vertices: []
       indices: 
       edges: []
@@ -280,14 +262,14 @@ TextureImporter:
         width: 33
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d9a0622e96416254583a30c0c4549ac1
-      internalID: -8319759607621040468
+      spriteID: a12126f32f36bed418d9140db792e7c8
+      internalID: -4522946039330864700
       vertices: []
       indices: 
       edges: []
@@ -301,14 +283,56 @@ TextureImporter:
         width: 33
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 44d280a0cff0c6c41914340c2a19ccbc
+      spriteID: 8d760a18d49b389448d56058e1e00a66
+      internalID: -8319759607621040468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: supershot_indicator_lights_9
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 0
+        width: 33
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 894078548c073444bb2a389da75857d7
       internalID: -8177988605750640897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: supershot_indicator_lights_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 33
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15f30e055ee86104c829e726599c83f9
+      internalID: -5161678637468315988
       vertices: []
       indices: 
       edges: []

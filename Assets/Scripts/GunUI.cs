@@ -12,13 +12,16 @@ public class GunUI : MonoBehaviour
     public Player Player;
     public float SlideSpeed = 50;
     public List<Sprite> LargeOrbs;
+    public Image SuperShotIndicator;
+    public List<Sprite> SuperShotSprites;
 
     // Runtime 
     float SwapSize = 1.0f;
     Queue<Image> orbQueue;
     float buffer;
+    public int Charge;
 
-    void Start()
+    void Awake()
     {
         Player.OnShootOrb += OnShootOrb;
         Player.OnSwapStore += OnSwap;
@@ -74,5 +77,11 @@ public class GunUI : MonoBehaviour
             image.GetComponent<RectTransform>().localPosition = pos - new Vector2(buffer, 0);
             pos += OrbOffset;
         }
+    }
+
+    public void ChainBreak(int number)
+    {
+        Charge = Mathf.Min(Charge + Mathf.Max(number - 2, 0), SuperShotSprites.Count - 1);
+        SuperShotIndicator.sprite = SuperShotSprites[Charge];
     }
 }
