@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -9,6 +10,7 @@ public class Player : MonoBehaviour
     public KeyCode LaunchOrb;
     public KeyCode Laser;
     public KeyCode Swap;
+    public KeyCode SuperShot;
     public int QueueSize = 5;
     public Laser LaserPrefab;
     public AudioSource LaserSource;
@@ -115,12 +117,7 @@ public class Player : MonoBehaviour
         }
         else if (Input.GetKeyDown(Laser))
         {
-            if (Charge == 8)
-            {
-                // Super charge!
-
-            }
-            else if (BulletsLeft > 0)
+            if (BulletsLeft > 0)
             {
                 BulletsLeft--;
 
@@ -132,6 +129,25 @@ public class Player : MonoBehaviour
                 laser.TargetPosition = new RadialPosition(position.Lane, lastEmptySpace + 1);
                 LaserSource.pitch = pitchVariance.GetRandomPitch();
                 LaserSource.Play();
+            }
+        }
+        else if (Input.GetKeyDown(SuperShot))
+        {
+            var movers = BoardController.Instance.GetLane(position.Lane).Where(x => x != null);
+            foreach (var mover in movers)
+            {
+                if (mover.TryGetComponent<Orb>(out var orb))
+                {
+                    orb.Shatter(0);
+                }
+            }
+
+            for (int i = 0; i < BoardController.NUM_LANES; i++)
+            {
+                if (BoardController.Instance.GetMover(new RadialPosition(i, 0)).TryGetComponent<Orb>(out var orb))
+                {
+                    orb.Shatter(0);
+                }
             }
         }
 

@@ -1346,6 +1346,7 @@ MonoBehaviour:
   LaunchOrb: 32
   Laser: 101
   Swap: 107
+  SuperShot: 113
   QueueSize: 5
   LaserPrefab: {fileID: 2275719523878523351, guid: 65479fde60461a640a715a9c3f9e0b91,
     type: 3}
