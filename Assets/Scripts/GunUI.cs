@@ -44,21 +44,21 @@ public class GunUI : MonoBehaviour
         var array = orbQueue.ToArray();
         for (int i = 0; i < newTypes.Length; i++)
         {
-            array[i].sprite = EnemyController.Instance.EnemyInfo[newTypes[i]].Sprite;
+            array[i].sprite = Factory.Instance.OrbSprites[newTypes[i]];
         }
     }
 
-    void OnSwap(int newStoreType, int newFrontType)
+    void OnSwap(int newStoreType, int newFrontType, bool skipAnimation)
     {
         SwapSize = 1.2f;
         var scale = new Vector3(SwapSize, SwapSize, 1);
 
         var frontOrb = orbQueue.Peek();
-        frontOrb.sprite = EnemyController.Instance.EnemyInfo[newFrontType].Sprite;
-        frontOrb.rectTransform.localScale = scale;
+        frontOrb.sprite = Factory.Instance.OrbSprites[newFrontType];
+        if (!skipAnimation) frontOrb.rectTransform.localScale = scale;
 
         StoredOrb.sprite = LargeOrbs[newStoreType];
-        StoredOrb.rectTransform.localScale = scale;
+        if (!skipAnimation) StoredOrb.rectTransform.localScale = scale;
     }
 
     void Update()

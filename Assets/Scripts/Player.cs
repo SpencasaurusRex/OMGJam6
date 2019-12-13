@@ -9,19 +9,16 @@ public class Player : MonoBehaviour
     public KeyCode LaunchOrb;
     public KeyCode Laser;
     public KeyCode Swap;
-    public float WaitTime;
-    public float MovementSharpness;
     public int QueueSize = 5;
     public Laser LaserPrefab;
     public AudioSource LaserSource;
     public AudioSource BlockedSource;
-    public GunUI GunUI;
 
     // Runtime
     PitchVariance pitchVariance;
-    public RadialPosition Position = new RadialPosition(0, 0);
-    float Cooldown;
+    public int Charge;
     AudioSource movementSource;
+    BoardMover boardMover;
     
     Queue<int> ShootOrbs = new Queue<int>();
     int StoredType;
@@ -29,18 +26,19 @@ public class Player : MonoBehaviour
     public delegate void ShootOrb(int[] newTypes);
     public event ShootOrb OnShootOrb;
 
-    public delegate void SwapStore(int newStoreType, int newFrontType);
+    public delegate void SwapStore(int newStoreType, int newFrontType, bool skipAntimation);
     public event SwapStore OnSwapStore;
 
     void Awake()
     {
+        boardMover = GetComponent<BoardMover>();
         movementSource = GetComponent<AudioSource>();
         pitchVariance = GetComponent<PitchVariance>();
     }
 
     void Start()
     {
-        BoardController.Instance.AddObject(gameObject, Position);
+        BoardController.Instance.AddMover(GetComponent<BoardMover>(), new RadialPosition(0, 0));
 
         for (int i = 0; i < QueueSize; i++)
         {
@@ -48,33 +46,25 @@ public class Player : MonoBehaviour
         }
 
         OnShootOrb?.Invoke(ShootOrbs.ToArray());
+        OnSwapStore?.Invoke(StoredType, ShootOrbs.Peek(), true);
     }
 
     void Update()
     {
-        Cooldown -= Time.deltaTime;
-        
-        // Change transform
-        var targetPosition = BoardController.Instance.GetPosition(Position, false);
-        transform.position = Vector2.Lerp(transform.position, targetPosition, 1f - Mathf.Exp(-MovementSharpness * Time.deltaTime));
-        
-        if (Cooldown > 0) return;
-
         // Input
         int delta = 0;
         if (Input.GetKeyDown(Clockwise)) delta--;
         if (Input.GetKeyDown(CounterClockwise)) delta++;
 
+        var position = boardMover.Position;
+
         if (delta != 0)
         {
-            var newPosition = new RadialPosition(Position.Lane + delta, 0);
-            var moved = BoardController.Instance.TryMove(gameObject, Position, newPosition);
-            if (moved)
+            var newPosition = new RadialPosition(position.Lane + delta, 0);
+            if (BoardController.Instance.TryMove(boardMover, newPosition))
             {
                 movementSource.pitch = pitchVariance.GetRandomPitch();
                 movementSource.Play();
-                Position = newPosition;
-                Cooldown = WaitTime;
             }
             else
             {
@@ -83,12 +73,12 @@ public class Player : MonoBehaviour
             }
         }
 
-        Lane lane = BoardController.Instance.Lanes[Position.Lane];
-        int lastEmptySpace = lane.GetLastEmptySpace();
+        var pos = BoardController.Instance.GetMoverPosition(boardMover);
+        int lastEmptySpace = BoardController.Instance.GetLastEmptySpace(pos.Lane);
 
         if (Input.GetKeyDown(LaunchOrb))
         {
-            if (lastEmptySpace == -1)
+            if (lastEmptySpace == 0)
             {
                 BlockedSource.pitch = pitchVariance.GetRandomPitch();
                 BlockedSource.Play();
@@ -97,34 +87,27 @@ public class Player : MonoBehaviour
 
             // Shoot orb
             int type = ShootOrbs.Dequeue();
-            var orb = EnemyController.Instance.CreateNewOrb(type, null);
-            orb.transform.localPosition = BoardController.Instance.GetPosition(Position, false);
-            orb.MovementType = MovementType.Shooting;
-            orb.JustShot = true;
-            orb.Position = new RadialPosition(Position.Lane, lastEmptySpace);
-            BoardController.Instance.AddObject(orb.gameObject, orb.Position);
+            Factory.Instance.CreateLaunchOrb(pos.Lane, transform.position, type, lastEmptySpace);
 
             ShootOrbs.Enqueue(GetNextType());
             OnShootOrb?.Invoke(ShootOrbs.ToArray());
         }
         else if (Input.GetKeyDown(Laser))
         {
-            var spawnPosition = BoardController.Instance.GetPosition(Position);
-            float degrees = Position.Lane / 8f * 360;
-            var laser = Instantiate(LaserPrefab, spawnPosition, Quaternion.Euler(0, 0, degrees));
-
-            laser.TargetPosition = new RadialPosition(Position.Lane, lastEmptySpace + 1);
-            LaserSource.pitch = pitchVariance.GetRandomPitch();
-            LaserSource.Play();
-
-            if (GunUI.Charge == 8)
+            if (Charge == 8)
             {
                 // Super charge!
-                laser.OnLaserHit += lane.SuperChargeHit;
+
             }
             else
             {
-                laser.OnLaserHit += lane.LaserHit;
+                var spawnPosition = BoardController.Instance.GetPosition(position);
+                float degrees = position.Lane / 8f * 360;
+                var laser = Instantiate(LaserPrefab, spawnPosition, Quaternion.Euler(0, 0, degrees));
+
+                laser.TargetPosition = new RadialPosition(position.Lane, lastEmptySpace + 1);
+                LaserSource.pitch = pitchVariance.GetRandomPitch();
+                LaserSource.Play();
             }
         }
 
@@ -139,7 +122,7 @@ public class Player : MonoBehaviour
                 else ShootOrbs.Enqueue(old);
             }
 
-            OnSwapStore?.Invoke(oldFront, StoredType);
+            OnSwapStore?.Invoke(oldFront, StoredType, false);
             
             StoredType = oldFront;
         }
@@ -147,7 +130,6 @@ public class Player : MonoBehaviour
 
     public int GetNextType()
     {
-        return Random.Range(0, EnemyController.Instance.AvailableTypes);
+        return Random.Range(0, WaveController.Instance.AvailableTypes - 1);
     }
-
 }

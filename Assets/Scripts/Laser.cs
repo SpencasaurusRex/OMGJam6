@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class Laser : MonoBehaviour
     {
         if (!hit)
         {
-            var target = BoardController.Instance.GetPosition(TargetPosition, false) * 10;
+            var target = BoardController.Instance.GetPosition(TargetPosition) * 100;
             transform.localPosition = Vector2.MoveTowards(transform.localPosition, target, Speed * Time.deltaTime);
             if (((Vector2)transform.localPosition - target).magnitude < .01f)
             {
@@ -44,6 +45,27 @@ public class Laser : MonoBehaviour
             OnLaserHit?.Invoke(orb);
             animator.SetBool("Hit", true);
             hit = true;
+
+            var orbPosition = orb.GetComponent<BoardMover>().Position;
+            var lane = BoardController.Instance.GetLane(orbPosition.Lane);
+            var orbsToBreak = new List<Orb>();
+            orbsToBreak.Add(orb);
+
+            for (int i = orbPosition.Position + 1; i < BoardController.NUM_SPACES; i++)
+            {
+                if (lane[i] == null) break;
+                var laneOrb = lane[i].GetComponent<Orb>();
+                if (laneOrb.Type == orb.Type)
+                {
+                    orbsToBreak.Add(laneOrb);
+                }
+                else break;
+            }
+
+            for (int i = 0; i < orbsToBreak.Count; i++)
+            {
+                orbsToBreak[i].Shatter(i);
+            }
         }
     }
 }

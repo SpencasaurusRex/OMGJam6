@@ -4,68 +4,75 @@ using Vector2 = UnityEngine.Vector2;
 public class Orb : MonoBehaviour
 {
     // Configuration
-    public float MovementSharpness;
-    public float Speed;
-    public MovementType MovementType = MovementType.Sliding;
-    public bool JustShot;
+    public bool Shoot;
     public bool BounceBack;
     public float BreakDelayAdd;
     public PitchVariance Pitch;
 
+    public Vector2 StraightBump;
+    public Vector2 DiagonalBump;
+
     // Runtime
     public int Type;
-    public RadialPosition Position;
     AudioSource audioSource;
     public bool Shattering;
     public float ShatterCountdown;
+    BoardMover mover;
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
         Pitch = GetComponent<PitchVariance>();
+        mover = GetComponent<BoardMover>();
     }
 
     void Update()
     {
-        if (Position == null) return;
-        var targetPosition = BoardController.Instance.GetPosition(Position, JustShot);
-
         if (Shattering)
         {
             ShatterCountdown -= Time.deltaTime;
             if (ShatterCountdown <= 0)
             {
-                BoardController.Instance.Lanes[Position.Lane].Objects[Position.Position] = null;
+                BoardController.Instance.RemoveMover(mover);
                 Destroy(gameObject);
             }
         }
 
-        if (MovementType == MovementType.Sliding)
-        {
-            transform.position = Vector2.Lerp(transform.position, targetPosition, 1f - Mathf.Exp(-MovementSharpness * Time.deltaTime));
-        }
-        else if (MovementType == MovementType.Shooting)
-        {
-            transform.position = Vector2.MoveTowards(transform.position, targetPosition, Speed * Time.deltaTime * (BounceBack ? .3f : 1));
-        }
+        //if (Shot)
+        //{
+        //    JustShot = false;
+        //    if (Position.Position < BoardController.NUM_SPACES - 1)
+        //    {
+        //        audioSource.pitch = Pitch.GetRandomPitch();
+        //        audioSource.Play();
+        //    }
+        //    BounceBack = true;
+        //}
+        //else if (BounceBack)
+        //{
+        //    BounceBack = false;
+        //    MovementType = MovementType.Sliding;
+        //}
+    }
 
-        if (((Vector2)transform.localPosition - targetPosition).magnitude <= .01f)
+    public void CloseEnough()
+    {
+        if (Shoot)
         {
-            if (JustShot)
+            Shoot = false;
+            BounceBack = true;
+            if (mover.Position.Position < BoardController.NUM_SPACES - 1)
             {
-                JustShot = false;
-                if (Position.Position < BoardController.NUM_SPACES - 1)
-                {
-                    audioSource.pitch = Pitch.GetRandomPitch();
-                    audioSource.Play();
-                }
-                BounceBack = true;
+                audioSource.pitch = Pitch.GetRandomPitch();
+                audioSource.Play();
             }
-            else if (BounceBack)
-            {
-                BounceBack = false;
-                MovementType = MovementType.Sliding;
-            }
+            mover.Offset = Vector2.zero;
+            mover.LinearSpeed /= 2;
+        }
+        else if (BounceBack)
+        {
+            BounceBack = false;
+            mover.MovementType = MovementType.Lerp;
         }
     }
 
@@ -74,9 +81,4 @@ public class Orb : MonoBehaviour
         Shattering = true;
         ShatterCountdown = delayMultiplier * BreakDelayAdd;
     }
-}
-public enum MovementType
-{
-    Sliding,
-    Shooting
 }

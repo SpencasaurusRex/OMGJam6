@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4745059321936569901}
   - component: {fileID: 1333502080042079394}
   - component: {fileID: -2831519412126409851}
+  - component: {fileID: -523641078441221096}
   m_Layer: 0
   m_Name: Orb
   m_TagString: Untagged
@@ -47,17 +48,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f7be43945fd8a146b75371f2e7fdf53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementSharpness: 10
-  Speed: 20
-  MovementType: 0
-  JustShot: 0
+  Shoot: 0
   BounceBack: 0
   BreakDelayAdd: 0.1
   Pitch: {fileID: 0}
+  StraightBump: {x: 0.33333334, y: 0}
+  DiagonalBump: {x: 0.33333334, y: 0.33333334}
   Type: 0
-  Position:
-    Lane: 0
-    Position: 0
   Shattering: 0
   ShatterCountdown: 0
 --- !u!212 &7129183561480825907
@@ -245,3 +242,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Min: 0.9
   Max: 1
+--- !u!114 &-523641078441221096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6599878575697510276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa68de85aa1a91b47b42b1ca737e1661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LerpSharpness: 10
+  LinearSpeed: 20
+  Offset: {x: 0, y: 0}
+  MovementType: 0
+  Locked: 0

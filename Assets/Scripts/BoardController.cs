@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardController : MonoBehaviour
@@ -16,56 +17,102 @@ public class BoardController : MonoBehaviour
     public Vector2 LastLaneDifferenceStraight;
     public Vector2 LastLaneDifferenceDiagonal;
 
-    public Vector2 BumpStraight;
-    public Vector2 BumpDiagonal;
+    public Vector2 BumpStraight; // 1/3
+    public Vector2 BumpDiagonal; // 1/3 1/3
 
     // Runtime
-    public List<Lane> Lanes;
-
     public static BoardController Instance { get; private set; }
+    Vector2[] positions;
+
+    BoardMover[] movers;
+    Dictionary<BoardMover, RadialPosition> positionLookup;
+
 
     void Awake()
     {
         Instance = this;
-    }
 
-    public GameObject GetObject(RadialPosition pos)
-    {   
-        return Lanes[pos.Lane].Objects[pos.Position];
-    }
+        positions = new Vector2[NUM_SPACES * NUM_LANES];
+        movers = new BoardMover[NUM_SPACES * NUM_LANES];
+        positionLookup = new Dictionary<BoardMover, RadialPosition>();
 
-    public void AddObject(GameObject obj, RadialPosition pos)
-    {
-        Lanes[pos.Lane].Objects[pos.Position] = obj;
-    }
-
-    public void RemoveObject(RadialPosition pos)
-    {
-        Lanes[pos.Lane].Objects[pos.Position] = null;
-    }
-
-    public Vector2 GetPosition(RadialPosition pos, bool shouldBump = false)
-    {
-        var vec = Lanes[pos.Lane].Spaces[pos.Position];
-        if (shouldBump)
+        for (int lane = 0; lane < NUM_LANES; lane++)
         {
-            float laneRotation = pos.Lane / 2 * 90;
-            var bump = pos.Lane % 2 == 0 ? BumpStraight : BumpDiagonal;
-            return vec + bump.Rotate(laneRotation);
+            bool even = lane % 2 == 0;
+            Vector2 pos = even ? InitialStraight : InitialDiagonal;
+            float laneAngle = (lane / 2) * 90f;
+            for (int position = 0; position < NUM_SPACES; position++)
+            {
+                positions[lane * NUM_SPACES + position] = pos.Rotate(laneAngle);
+                pos += even ? OffsetStraight : OffsetDiagonal;
+
+                if (position == NUM_SPACES - 2)
+                {
+                    pos += even ? LastLaneDifferenceStraight : LastLaneDifferenceDiagonal;
+                }
+            }
         }
-        return vec;
-    } 
+    }
 
-    public bool TryMove(GameObject obj, RadialPosition from, RadialPosition to)
+    public void AddMover(BoardMover mover, RadialPosition pos)
     {
-        if (from == to) return false;
-        if (GetObject(to) == null)
+        if (positionLookup.ContainsKey(mover)) throw new Exception("Mover already on board");
+
+        positionLookup.Add(mover, pos);
+        movers[pos.Index] = mover;
+    }
+
+    public bool TryMove(BoardMover mover, RadialPosition to)
+    {
+        if (mover.Locked) return false;
+        if (GetMover(to) == null)
         {
-            RemoveObject(from);
-            AddObject(obj, to);
+            movers[GetMoverPosition(mover).Index] = null;
+            positionLookup.Remove(mover);
+            AddMover(mover, to);
             return true;
         }
-
         return false;
+    }
+
+    public void RemoveMover(BoardMover mover)
+    {
+        if (!positionLookup.ContainsKey(mover)) throw new Exception("Mover not on board");
+
+        movers[GetMoverPosition(mover).Index] = null;
+        positionLookup.Remove(mover);
+
+        mover.CallRemove();
+    }
+
+    public BoardMover GetMover(RadialPosition pos) => movers[pos.Index];
+
+    public RadialPosition GetMoverPosition(BoardMover mover) => positionLookup.TryGetValue(mover, out var pos) ? pos : null;
+
+    public Vector2 GetPosition(RadialPosition pos) => positions[pos.Index];
+
+    public Vector2 GetPosition(BoardMover mover) => GetPosition(GetMoverPosition(mover));
+
+    public int GetLastEmptySpace(int lane)
+    {
+        int startIndex = new RadialPosition(lane, 0).Index;
+
+        for (int i = 1; i < NUM_SPACES; i++)
+        {
+            if (movers[startIndex + i] != null) return i - 1;
+        }
+
+        return NUM_SPACES - 1;
+    }
+
+    public BoardMover[] GetLane(int lane)
+    {
+        BoardMover[] results = new BoardMover[BoardController.NUM_SPACES];
+        for (int i = 0; i < NUM_SPACES; i++)
+        {
+            results[i] = movers[lane * NUM_SPACES + i];
+        }
+
+        return results;
     }
 }

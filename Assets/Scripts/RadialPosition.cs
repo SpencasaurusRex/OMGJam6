@@ -7,6 +7,8 @@ public class RadialPosition : IEquatable<RadialPosition>
     public int Lane;
     public int Position;
 
+    public int Index => BoardController.NUM_SPACES * Lane + Position;
+
     public RadialPosition(int lane, int position)
     {
         Lane = lane % BoardController.NUM_LANES;
