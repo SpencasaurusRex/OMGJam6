@@ -20,6 +20,8 @@ public class BoardMover : MonoBehaviour
 
     void Update()
     {
+        if (Locked) return;
+
         var target = BoardController.Instance.GetPosition(this) + Offset;
 
         if (MovementType == MovementType.Lerp)

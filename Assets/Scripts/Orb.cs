@@ -8,6 +8,7 @@ public class Orb : MonoBehaviour
     public bool BounceBack;
     public float BreakDelayAdd;
     public PitchVariance Pitch;
+    public AudioClip ShatterSound;
 
     public Vector2 StraightBump;
     public Vector2 DiagonalBump;
@@ -18,41 +19,38 @@ public class Orb : MonoBehaviour
     public bool Shattering;
     public float ShatterCountdown;
     BoardMover mover;
+    float pitchMultiplier;
+    bool ShatteringAnimation;
+    Animator animator;
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
         Pitch = GetComponent<PitchVariance>();
         mover = GetComponent<BoardMover>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        if (Shattering)
+        if (ShatteringAnimation)
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+            {
+                Destroy(gameObject);
+            }
+        }
+        else if (Shattering)
         {
             ShatterCountdown -= Time.deltaTime;
             if (ShatterCountdown <= 0)
             {
                 BoardController.Instance.RemoveMover(mover);
-                Destroy(gameObject);
+                ShatteringAnimation = true;
+                animator.enabled = true;
+                Factory.Instance.PlaySound(ShatterSound, pitchMultiplier);
             }
         }
-
-        //if (Shot)
-        //{
-        //    JustShot = false;
-        //    if (Position.Position < BoardController.NUM_SPACES - 1)
-        //    {
-        //        audioSource.pitch = Pitch.GetRandomPitch();
-        //        audioSource.Play();
-        //    }
-        //    BounceBack = true;
-        //}
-        //else if (BounceBack)
-        //{
-        //    BounceBack = false;
-        //    MovementType = MovementType.Sliding;
-        //}
     }
 
     public void CloseEnough()
@@ -80,5 +78,8 @@ public class Orb : MonoBehaviour
     {
         Shattering = true;
         ShatterCountdown = delayMultiplier * BreakDelayAdd;
+
+        pitchMultiplier = Mathf.Pow(9f / 8, delayMultiplier);
+        mover.Locked = true;
     }
 }

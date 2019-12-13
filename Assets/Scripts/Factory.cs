@@ -5,6 +5,8 @@ public class Factory : MonoBehaviour
     // Configuration
     public Sprite[] OrbSprites;
     public Sprite[] LargeOrbSprites;
+    public Sound SoundPrefab;
+    public Color[] OrbColors;
 
     public Orb OrbPrefab;
 
@@ -44,5 +46,12 @@ public class Factory : MonoBehaviour
         boardMover.Offset = (lane % 2 == 0 ? orb.StraightBump : orb.DiagonalBump).Rotate(lane / 2 * 90f);
 
         orb.transform.position = position;
+    }
+
+    public void PlaySound(AudioClip clip, float pitch)
+    {
+        var sound = Instantiate(SoundPrefab);
+        sound.Clip = clip;
+        sound.Pitch = pitch;
     }
 }

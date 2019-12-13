@@ -43,6 +43,8 @@ public class Laser : MonoBehaviour
     {
         if (!hit && collider.gameObject.TryGetComponent<Orb>(out var orb))
         {
+            if (orb.Shattering) return;
+
             OnLaserHit?.Invoke(orb);
             animator.SetBool("Hit", true);
             hit = true;

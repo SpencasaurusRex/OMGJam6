@@ -131,9 +131,11 @@ public class Player : MonoBehaviour
                 LaserSource.Play();
             }
         }
-        else if (Input.GetKeyDown(SuperShot))
+        else if (Input.GetKeyDown(SuperShot) && Charge == 8)
         {
+            Charge = 0;
             var movers = BoardController.Instance.GetLane(position.Lane).Where(x => x != null);
+            
             foreach (var mover in movers)
             {
                 if (mover.TryGetComponent<Orb>(out var orb))
@@ -144,7 +146,8 @@ public class Player : MonoBehaviour
 
             for (int i = 0; i < BoardController.NUM_LANES; i++)
             {
-                if (BoardController.Instance.GetMover(new RadialPosition(i, 0)).TryGetComponent<Orb>(out var orb))
+                var mover = BoardController.Instance.GetMover(new RadialPosition(i, 0));
+                if (mover != null && mover.TryGetComponent<Orb>(out var orb))
                 {
                     orb.Shatter(0);
                 }

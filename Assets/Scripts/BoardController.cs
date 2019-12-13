@@ -20,6 +20,8 @@ public class BoardController : MonoBehaviour
     public Vector2 BumpStraight; // 1/3
     public Vector2 BumpDiagonal; // 1/3 1/3
 
+    public BoardMover Blocker;
+
     // Runtime
     public static BoardController Instance { get; private set; }
     Vector2[] positions;
@@ -51,6 +53,12 @@ public class BoardController : MonoBehaviour
                     pos += even ? LastLaneDifferenceStraight : LastLaneDifferenceDiagonal;
                 }
             }
+        }
+
+        // Block lane 6
+        for (int pos = 1; pos < NUM_SPACES; pos++)
+        {
+            movers[6 * NUM_SPACES + pos] = Blocker;
         }
     }
 

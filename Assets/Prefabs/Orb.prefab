@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1333502080042079394}
   - component: {fileID: -2831519412126409851}
   - component: {fileID: -523641078441221096}
+  - component: {fileID: -9073419652350821486}
   m_Layer: 0
   m_Name: Orb
   m_TagString: Untagged
@@ -52,6 +53,7 @@ MonoBehaviour:
   BounceBack: 0
   BreakDelayAdd: 0.1
   Pitch: {fileID: 0}
+  ShatterSound: {fileID: 8300000, guid: fdfb8a5a3ba2f7d42b70deb40d880795, type: 3}
   StraightBump: {x: 0.33333334, y: 0}
   DiagonalBump: {x: 0.33333334, y: 0.33333334}
   Type: 0
@@ -259,3 +261,22 @@ MonoBehaviour:
   Offset: {x: 0, y: 0}
   MovementType: 0
   Locked: 0
+--- !u!95 &-9073419652350821486
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6599878575697510276}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5f7ca21695d992346aaef2ed6f702396, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
