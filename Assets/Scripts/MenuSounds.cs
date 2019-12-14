@@ -5,6 +5,7 @@ public class MenuSounds : MonoBehaviour
 {
     public AudioClip Sound;
     GameObject lastSelected;
+    bool first;
 
     void Update()
     {
@@ -13,7 +14,8 @@ public class MenuSounds : MonoBehaviour
         {
             if (lastSelected != sel)
             {
-                Factory.Instance.PlaySound(Sound, 1, 0.4f);
+                if (!first) first = true;
+                else Factory.Instance.PlaySound(Sound, 1, 0.4f);
             }
 
             lastSelected = sel;
