@@ -8,6 +8,9 @@ public class BoardMover : MonoBehaviour
     public delegate void CloseEnough();
     public event CloseEnough OnCloseEnough;
 
+    public delegate void Move();
+    public event Move OnMove;
+
     public float LerpSharpness;
     public float LinearSpeed;
 
@@ -42,6 +45,11 @@ public class BoardMover : MonoBehaviour
     public void CallRemove()
     {
         OnRemove?.Invoke();
+    }
+
+    public void CallMove()
+    {
+        OnMove?.Invoke();
     }
 }
 

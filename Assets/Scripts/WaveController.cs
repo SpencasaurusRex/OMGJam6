@@ -54,6 +54,11 @@ public class WaveController : MonoBehaviour
             spawnedParticleCreation.Add(false);
             FirstEnabled.Add(false);
         }
+
+        foreach (var wobbleSprite in WobbleSprites)
+        {
+            wobbleSprite.color = new Color(1, 1, 1, 0);
+        }
     }
 
     void Update()
@@ -131,6 +136,6 @@ public class WaveController : MonoBehaviour
 
     int GetNextOrbType(int lane)
     {
-        return Random.Range(0, AvailableTypes - 1);
+        return Random.Range(0, AvailableTypes);
     }
 }

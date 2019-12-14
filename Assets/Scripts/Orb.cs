@@ -34,6 +34,8 @@ public class Orb : MonoBehaviour
         Pitch = GetComponent<PitchVariance>();
         mover = GetComponent<BoardMover>();
         animator = GetComponent<Animator>();
+
+        mover.OnMove += OnMove;
     }
 
     void Update()
@@ -91,21 +93,39 @@ public class Orb : MonoBehaviour
         Destroy(chainIndicator);
     }
 
-    public void CheckForChain()
+    public void CheckForChain(bool backwards = false)
     {
         List<Orb> chainOrbs = new List<Orb> {this};
 
         var pos = mover.Position;
-        for (int i = pos.Position + 1; i < BoardController.NUM_SPACES - 1; i++)
+        if (backwards)
         {
-            var mover = BoardController.Instance.GetMover(new RadialPosition(pos.Lane, i));
-            if (mover.TryGetComponent<Orb>(out var orb) && orb.Type == Type)
+            for (int i = pos.Position - 1; i >= 0; i--)
             {
-                chainOrbs.Add(orb);
+                var mover = BoardController.Instance.GetMover(new RadialPosition(pos.Lane, i));
+                if (mover != null && mover.TryGetComponent<Orb>(out var orb) && orb.Type == Type)
+                {
+                    chainOrbs.Add(orb);
+                }
+                else
+                {
+                    break;
+                }
             }
-            else
+        }
+        else
+        {
+            for (int i = pos.Position + 1; i < BoardController.NUM_SPACES - 1; i++)
             {
-                break;
+                var mover = BoardController.Instance.GetMover(new RadialPosition(pos.Lane, i));
+                if (mover != null && mover.TryGetComponent<Orb>(out var orb) && orb.Type == Type)
+                {
+                    chainOrbs.Add(orb);
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 
@@ -113,9 +133,18 @@ public class Orb : MonoBehaviour
         {
             for (int i = 0; i < chainOrbs.Count; i++)
             {
-                chainOrbs[i].AddChain(i == 0,i == chainOrbs.Count - 1);
+                if (backwards)
+                {
+                    chainOrbs[i].AddChain(i == chainOrbs.Count - 1, i == 0);
+                }
+                else
+                {
+                    chainOrbs[i].AddChain(i == 0,i == chainOrbs.Count - 1);
+                }
             }
         }
+
+        
     }
 
     public void AddChain(bool cap, bool endCap)
@@ -135,5 +164,10 @@ public class Orb : MonoBehaviour
             chainIndicator = Instantiate(SidePrefab, transform);
         }
         chainIndicator.transform.rotation = rotation;
+    }
+
+    public void OnMove()
+    {
+        CheckForChain(true);
     }
 }

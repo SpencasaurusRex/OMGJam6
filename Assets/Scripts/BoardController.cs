@@ -70,6 +70,7 @@ public class BoardController : MonoBehaviour
             movers[GetMoverPosition(mover).Index] = null;
             positionLookup.Remove(mover);
             AddMover(mover, to);
+            mover.CallMove();
             return true;
         }
         return false;
