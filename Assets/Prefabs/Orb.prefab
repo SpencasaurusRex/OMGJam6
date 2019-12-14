@@ -56,6 +56,10 @@ MonoBehaviour:
   ShatterSound: {fileID: 8300000, guid: fdfb8a5a3ba2f7d42b70deb40d880795, type: 3}
   StraightBump: {x: 0.33333334, y: 0}
   DiagonalBump: {x: 0.33333334, y: 0.33333334}
+  CapPrefab: {fileID: 8270320460544146042, guid: 03dee219bce38d248abd8bed13286ba5,
+    type: 3}
+  SidePrefab: {fileID: 4153896020023537132, guid: 17f621e4912ca5a449f9fb47844384e1,
+    type: 3}
   Type: 0
   Shattering: 0
   ShatterCountdown: 0
