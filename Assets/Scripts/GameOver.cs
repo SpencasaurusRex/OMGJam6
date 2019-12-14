@@ -23,15 +23,11 @@ public class GameOver : MonoBehaviour
     public void Over()
     {
         over = true;
-
-        GetComponent<EventSystem>().enabled = true;
-        GetComponent<StandaloneInputModule>().enabled = true;
     }
 
     void Update()
     {
-        fadeAmount += Time.deltaTime / FadeTime;
-        if (over == true)
+        if (over)
         {
             foreach (var image in Images)
             {
@@ -43,6 +39,16 @@ public class GameOver : MonoBehaviour
                 text.color = new Color(1, 1, 1, fadeAmount);
             }
         }
+
+        if (fadeAmount < 1)
+        {
+            fadeAmount += Time.deltaTime / FadeTime;
+            SelectorImage.enabled = false;
+            return;
+        }
+        
+        GetComponent<EventSystem>().enabled = true;
+        GetComponent<StandaloneInputModule>().enabled = true;
 
         var selected = EventSystem.current.currentSelectedGameObject;
 
@@ -63,5 +69,36 @@ public class GameOver : MonoBehaviour
 
         var targetTransform = selected.GetComponent<RectTransform>();
         Selector.localPosition = new Vector3(-14.35f, targetTransform.localPosition.y, 0);
+    }
+
+    public void MainMenu()
+    {
+        Cleanup();
+        GameController.Instance.GoToMainMenu();
+        gameObject.SetActive(false);
+    }
+
+    public void TryAgain()
+    {
+        Cleanup();
+        GameController.Instance.StartGame();
+        gameObject.SetActive(false);
+    }
+
+    void Cleanup()
+    {
+        GetComponent<EventSystem>().enabled = false;
+        GetComponent<StandaloneInputModule>().enabled = false;
+        fadeAmount = 0;
+
+        foreach (var image in Images)
+        {
+            image.color = new Color(image.color.r, image.color.g, image.color.b, fadeAmount);
+        }
+        foreach (var text in Text)
+        {
+            text.color = new Color(1, 1, 1, fadeAmount);
+        }
+        over = false;
     }
 }

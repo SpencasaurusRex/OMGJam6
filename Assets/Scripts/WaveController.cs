@@ -18,12 +18,15 @@ public class WaveController : MonoBehaviour
 
     public static WaveController Instance { get; private set; }
 
-    const int TOTAL_SPACES = BoardController.NUM_LANES * BoardController.NUM_SPACES;
+    const int TOTAL_SPACES = (BoardController.NUM_LANES - 1) * BoardController.NUM_SPACES;
 
     void Awake()
     {
         Instance = this;
+    }
 
+    void OnEnable()
+    {
         laneCountDowns = new List<float>();
         lastLaneType = new List<int>();
         foreach (int i in ActivateTimes)
@@ -39,7 +42,7 @@ public class WaveController : MonoBehaviour
         LanesLeft = BoardController.NUM_LANES;
         for (int lane = 0; lane < BoardController.NUM_LANES; lane++)
         {
-            for (int space = 0; space < BoardController.NUM_SPACES; space++)
+            for (int space = 0; space < BoardController.NUM_SPACES - 1; space++)
             {
                 if (BoardController.Instance.GetMover(new RadialPosition(lane, space)) != null)
                 {

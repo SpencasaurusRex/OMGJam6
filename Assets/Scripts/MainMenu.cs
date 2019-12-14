@@ -18,9 +18,15 @@ public class MainMenu : MonoBehaviour
         Buttons = GetComponentsInChildren<Button>().Select(x => x.gameObject).ToList();
     }
 
+    void OnEnable()
+    {
+        GetComponent<EventSystem>().enabled = true;
+        GetComponent<StandaloneInputModule>().enabled = true;
+    }
+
     void Update()
     {
-        var selected = EventSystem.current.currentSelectedGameObject;
+        var selected = GetComponent<EventSystem>().currentSelectedGameObject;
 
         // Rebind if none selected
         if (Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.3f && selected == null)

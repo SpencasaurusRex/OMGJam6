@@ -7,6 +7,7 @@ public class Sound : MonoBehaviour
 
     public AudioClip Clip;
     public float Pitch;
+    public float Volume = 1;
 
     float countdown;
 
@@ -21,6 +22,8 @@ public class Sound : MonoBehaviour
         {
             source.clip = Clip;
             source.pitch = Pitch;
+            source.volume = Volume;
+            print(Volume);
             source.Play();
             playing = true;
             countdown = Clip.length;

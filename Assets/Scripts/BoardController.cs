@@ -17,9 +17,6 @@ public class BoardController : MonoBehaviour
     public Vector2 LastLaneDifferenceStraight;
     public Vector2 LastLaneDifferenceDiagonal;
 
-    public Vector2 BumpStraight; // 1/3
-    public Vector2 BumpDiagonal; // 1/3 1/3
-
     public BoardMover Blocker;
 
     // Runtime
@@ -55,11 +52,6 @@ public class BoardController : MonoBehaviour
             }
         }
 
-        // Block lane 6
-        for (int pos = 1; pos < NUM_SPACES; pos++)
-        {
-            movers[6 * NUM_SPACES + pos] = Blocker;
-        }
     }
 
     public void AddMover(BoardMover mover, RadialPosition pos)
@@ -122,5 +114,24 @@ public class BoardController : MonoBehaviour
         }
 
         return results;
+    }
+
+    public void Clear()
+    {
+        for (int i = 0; i < movers.Length; i++)
+        {
+            if (movers[i] != null && movers[i].TryGetComponent<Orb>(out var orb))
+            {
+                Destroy(orb.gameObject);
+            }
+            movers[i] = null;
+        }
+        positionLookup.Clear();
+
+        // Block lane 6
+        for (int pos = 1; pos < NUM_SPACES; pos++)
+        {
+            movers[6 * NUM_SPACES + pos] = Blocker;
+        }
     }
 }

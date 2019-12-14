@@ -51,11 +51,12 @@ public class Factory : MonoBehaviour
         orb.transform.position = position;
     }
 
-    public void PlaySound(AudioClip clip, float pitch)
+    public void PlaySound(AudioClip clip, float pitch, float volume = 1)
     {
         var sound = Instantiate(SoundPrefab);
         sound.Clip = clip;
         sound.Pitch = pitch;
+        sound.Volume = volume;
     }
 
     public void CreateSuperShotLaser(int lane)

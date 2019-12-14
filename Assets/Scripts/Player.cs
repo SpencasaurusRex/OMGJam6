@@ -19,6 +19,10 @@ public class Player : MonoBehaviour
     public float BulletRechargeTime;
     public List<Sprite> PlayerSprites;
 
+    public float LaserVolume = 1.3f;
+    public float MovementVolume = 1.3f;
+    public float BlockedVolume = 1f;
+
     // Runtime
     PitchVariance pitchVariance;
     public int Charge;
@@ -43,14 +47,18 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    void Start()
+    void OnEnable()
     {
+        ShootOrbs.Clear();
+
         boardMover.enabled = true;
 
         var startingPos = new RadialPosition(2, 0);
         BoardController.Instance.AddMover(GetComponent<BoardMover>(), startingPos);
         sr.sprite = PlayerSprites[startingPos.Lane];
 
+        transform.position = BoardController.Instance.GetPosition(startingPos);
+        
         for (int i = 0; i < QueueSize; i++)
         {
             ShootOrbs.Enqueue(GetNextType());
@@ -60,7 +68,7 @@ public class Player : MonoBehaviour
         OnSwapStore?.Invoke(StoredType, ShootOrbs.Peek(), true);
 
         BulletsLeft = 4;
-
+        BulletRechargeAmount = 0;
     }
 
     void Update()
@@ -87,12 +95,12 @@ public class Player : MonoBehaviour
             var newPosition = new RadialPosition(position.Lane + delta, 0);
             if (BoardController.Instance.TryMove(boardMover, newPosition))
             {
-                Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch());
+                Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch(), MovementVolume);
                 sr.sprite = PlayerSprites[newPosition.Lane];
             }
             else
             {
-                Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch());
+                Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
             }
         }
 
@@ -103,7 +111,7 @@ public class Player : MonoBehaviour
         {
             if (lastEmptySpace == 0)
             {
-                Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch());
+                Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
                 return;
             }
 
@@ -126,7 +134,7 @@ public class Player : MonoBehaviour
 
                 laser.player = this;
                 laser.TargetPosition = new RadialPosition(position.Lane, lastEmptySpace + 1);
-                Factory.Instance.PlaySound(LaserClip, pitchVariance.GetRandomPitch());
+                Factory.Instance.PlaySound(LaserClip, pitchVariance.GetRandomPitch(), LaserVolume);
             }
         }
         else if (Input.GetKeyDown(SuperShot) && Charge == 8)
