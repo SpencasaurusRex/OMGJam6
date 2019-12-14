@@ -10,6 +10,7 @@ public class MainMenu : MonoBehaviour
     public float SelectorOffset;
     public RectTransform Selector;
     public Image SelectorImage;
+    public Credits CreditsUI;
 
     List<GameObject> Buttons;
 
@@ -62,6 +63,7 @@ public class MainMenu : MonoBehaviour
 
     public void Credits()
     {
-        // TODO
+        CreditsUI.gameObject.SetActive(true);
+        gameObject.SetActive(false);
     }
 }
