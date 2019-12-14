@@ -9,6 +9,7 @@ public class Orb : MonoBehaviour
     public bool BounceBack;
     public float BreakDelayAdd;
     public PitchVariance Pitch;
+    public AudioClip BounceSound;
     public AudioClip ShatterSound;
 
     public Vector2 StraightBump;
@@ -68,8 +69,7 @@ public class Orb : MonoBehaviour
             BounceBack = true;
             if (mover.Position.Position < BoardController.NUM_SPACES - 1)
             {
-                audioSource.pitch = Pitch.GetRandomPitch();
-                audioSource.Play();
+                Factory.Instance.PlaySound(BounceSound, Pitch.GetRandomPitch());
             }
             mover.Offset = Vector2.zero;
             mover.LinearSpeed /= 2;
@@ -164,6 +164,7 @@ public class Orb : MonoBehaviour
             chainIndicator = Instantiate(SidePrefab, transform);
         }
         chainIndicator.transform.rotation = rotation;
+        chainIndicator.GetComponent<SpriteRenderer>().color = Factory.Instance.OrbColors[Type];
     }
 
     public void OnMove()

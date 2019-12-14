@@ -22,8 +22,7 @@ public class Sound : MonoBehaviour
         {
             source.clip = Clip;
             source.pitch = Pitch;
-            source.volume = Volume;
-            print(Volume);
+            source.volume = Volume * GameController.Instance.GlobalVolume;
             source.Play();
             playing = true;
             countdown = Clip.length;
