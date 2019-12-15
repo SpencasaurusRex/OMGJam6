@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Experimental.PlayerLoop;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -74,7 +74,7 @@ public class GameController : MonoBehaviour
             source.volume = source.volume - .4f;
         }
 
-        PauseButton.gameObject.SetActive(true);
+        //PauseButton.gameObject.SetActive(true);
 
         Player.enabled = true;
         Player.Setup();
@@ -85,6 +85,7 @@ public class GameController : MonoBehaviour
         InputModule.enabled = true;
         
         Tutorial.StartTutorial();
+        ScoreController.Instance.StartGame();
     }
 
     public void TutorialDone()
@@ -99,10 +100,14 @@ public class GameController : MonoBehaviour
         WaveController.Setup();
         MusicSource.Play();
         MenuButton.SetActive(true);
+
+        ScoreController.Instance.StartGame();
     }
 
     public void GoToMainMenu()
     {
+        ScoreController.Instance.EndGame();
+
         MainMenu.gameObject.SetActive(true);
         MusicSource.Stop();
         MenuButton.SetActive(false);
@@ -133,6 +138,8 @@ public class GameController : MonoBehaviour
         GameEventSystem.enabled = false;
         InputModule.enabled = false;
         PauseButton.gameObject.SetActive(false);
+
+        ScoreController.Instance.EndGame();
     }
 
     public void ClickVolume()

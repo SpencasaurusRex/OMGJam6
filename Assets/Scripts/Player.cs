@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Player : MonoBehaviour
 {
@@ -152,20 +153,24 @@ public class Player : MonoBehaviour
             Factory.Instance.CreateCampfireBlast();
             var movers = BoardController.Instance.GetLane(position.Lane).Where(x => x != null);
 
+            int orbCount = 0;
             foreach (var mover in movers)
             {
                 if (mover.TryGetComponent<Orb>(out var orb))
                 {
                     orb.Shatter(0);
+                    ScoreController.Instance.OrbBreak(orbCount++);
                 }
             }
 
             for (int i = 0; i < BoardController.NUM_LANES; i++)
             {
+                if (i == position.Lane) continue;
                 var mover = BoardController.Instance.GetMover(new RadialPosition(i, 0));
                 if (mover != null && mover.TryGetComponent<Orb>(out var orb))
                 {
                     orb.Shatter(0);
+                    ScoreController.Instance.OrbBreak(0);
                 }
 
                 mover = BoardController.Instance.GetMover(new RadialPosition(i, 1));
@@ -195,7 +200,7 @@ public class Player : MonoBehaviour
 
     public int GetNextType()
     {
-        return Random.Range(0, WaveController.Instance.AvailableTypes - 1);
+        return Random.Range(0, WaveController.Instance.AvailableTypes);
     }
 
     public void ChargeGun(int chainLength)

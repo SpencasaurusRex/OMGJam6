@@ -68,6 +68,7 @@ public class Laser : MonoBehaviour
             for (int i = 0; i < orbsToBreak.Count; i++)
             {
                 orbsToBreak[i].Shatter(i);
+                ScoreController.Instance.OrbBreak(i);
             }
 
             player.ChargeGun(orbsToBreak.Count);

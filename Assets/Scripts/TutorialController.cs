@@ -143,6 +143,8 @@ public class TutorialController : MonoBehaviour
         TutorialText.text = "CHARGE YOUR SUPER LASER BY BREAKING ALL THE CHAINS";
         state = TutorialState.SuperShotSetup;
 
+        Player.BulletsLeft = 4;
+        Player.BulletRechargeAmount = 0;
         shotsLeft = 999;
         Player.LaserEnabled = true;
         Player.MovementEnabled = true;
@@ -152,18 +154,21 @@ public class TutorialController : MonoBehaviour
         {
             var orb = Factory.Instance.CreateLaneOrb(7, 0, i);
             Factory.Instance.CreateOrbSpawnAnimation(orb);
+            if (i == 5) orb.CheckForChain(true);
         }
 
         for (int i = 3; i < 8; i++)
         {
             var orb = Factory.Instance.CreateLaneOrb(5, 1, i);
             Factory.Instance.CreateOrbSpawnAnimation(orb);
+            if (i == 7) orb.CheckForChain(true);
         }
 
         for (int i = 2; i < 6; i++)
         {
             var orb = Factory.Instance.CreateLaneOrb(3, 1, i);
             Factory.Instance.CreateOrbSpawnAnimation(orb);
+            if (i == 5) orb.CheckForChain(true);
         }
     }
 
