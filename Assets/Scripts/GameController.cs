@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -19,8 +21,14 @@ public class GameController : MonoBehaviour
     public EventSystem GameEventSystem;
     public StandaloneInputModule InputModule;
     public TutorialController Tutorial;
+    public GameObject MenuButton;
+    public Image PauseButton;
+    public GameObject PauseScreen;
+    public Sprite PauseSprite;
+    public Sprite PlaySprite;
 
     // Runtime
+    bool paused;
     int volumeLevel = 3;
     bool musicOn = true;
     List<float> StartingVolumes;
@@ -66,6 +74,8 @@ public class GameController : MonoBehaviour
             source.volume = source.volume - .4f;
         }
 
+        PauseButton.gameObject.SetActive(true);
+
         Player.enabled = true;
         Player.Setup();
         mainMenu = false;
@@ -86,13 +96,22 @@ public class GameController : MonoBehaviour
         Player.Setup();
 
         WaveController.enabled = true;
+        WaveController.Setup();
         MusicSource.Play();
+        MenuButton.SetActive(true);
     }
 
     public void GoToMainMenu()
     {
         MainMenu.gameObject.SetActive(true);
         MusicSource.Stop();
+        MenuButton.SetActive(false);
+        PauseButton.gameObject.SetActive(false);
+
+        MusicImage.GetComponent<EventSystem>().enabled = false;
+        MusicImage.GetComponent<StandaloneInputModule>().enabled = false;
+        mainMenu = true;
+        UpdateButtons();
     }
 
     public void EndGame()
@@ -110,8 +129,10 @@ public class GameController : MonoBehaviour
         mainMenu = true;
         UpdateButtons();
 
+        MenuButton.SetActive(false);
         GameEventSystem.enabled = false;
         InputModule.enabled = false;
+        PauseButton.gameObject.SetActive(false);
     }
 
     public void ClickVolume()
@@ -145,5 +166,15 @@ public class GameController : MonoBehaviour
     {
         VolumeImage.sprite = VolumeSprites[volumeLevel + (mainMenu ? 4 : 0)];
         MusicImage.sprite = MusicSprites[(musicOn ? 0 : 1) + (mainMenu ? 2 : 0)];
+        PauseButton.sprite = paused ? PlaySprite : PauseSprite;
+    }
+
+    public void PressPause()
+    {
+        paused = !paused;
+        PauseScreen.SetActive(paused);
+        Time.timeScale = paused ? 0 : 1;
+
+        UpdateButtons();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
@@ -110,7 +111,7 @@ public class Player : MonoBehaviour
         var pos = BoardController.Instance.GetMoverPosition(boardMover);
         int lastEmptySpace = BoardController.Instance.GetLastEmptySpace(pos.Lane);
 
-        if (Input.GetMouseButtonDown(0) && OrbShotEnabled)
+        if (Input.GetMouseButtonDown(0) && OrbShotEnabled && !EventSystem.current.IsPointerOverGameObject())
         {
             if (lastEmptySpace == 0)
             {
@@ -145,6 +146,7 @@ public class Player : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Space) && Charge == 8 && SupershotEnabled)
         {
             Charge = 0;
+            BulletsLeft = Mathf.Min(BulletsLeft + 1, 4);
 
             Factory.Instance.CreateSuperShotLaser(position.Lane);
             Factory.Instance.CreateCampfireBlast();

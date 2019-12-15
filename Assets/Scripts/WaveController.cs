@@ -33,9 +33,10 @@ public class WaveController : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        Setup();
     }
 
-    void OnEnable()
+    public void Setup()
     {
         laneCountDowns = new List<float>();
         lastLaneType = new List<int>();
