@@ -5,12 +5,6 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     // Configuration
-    public KeyCode Clockwise;
-    public KeyCode CounterClockwise;
-    public KeyCode LaunchOrb;
-    public KeyCode Laser;
-    public KeyCode Swap;
-    public KeyCode SuperShot;
     public int QueueSize = 5;
     public Laser LaserPrefab;
     public AudioClip MovementClip;
@@ -31,14 +25,29 @@ public class Player : MonoBehaviour
     BoardMover boardMover;
     SpriteRenderer sr;
 
+    public bool OrbShotEnabled;
+    public bool LaserEnabled;
+    public bool SwapEnabled;
+    public bool SupershotEnabled;
+    public bool MovementEnabled;
+
     Queue<int> ShootOrbs = new Queue<int>();
-    int StoredType;
+    public int StoredType;
 
     public delegate void ShootOrb(int[] newTypes);
     public event ShootOrb OnShootOrb;
 
     public delegate void SwapStore(int newStoreType, int newFrontType, bool skipAntimation);
     public event SwapStore OnSwapStore;
+
+    public delegate void ShootLaser();
+    public event ShootLaser OnShootLaser;
+
+    public delegate void Move(RadialPosition to);
+    public event Move OnMove;
+
+    public delegate void SuperShotCharged();
+    public event SuperShotCharged OnSuperShotCharged;
 
     void Awake()
     {
@@ -58,17 +67,27 @@ public class Player : MonoBehaviour
         sr.sprite = PlayerSprites[startingPos.Lane];
 
         transform.position = BoardController.Instance.GetPosition(startingPos);
-        
+
+        BulletsLeft = 4;
+        BulletRechargeAmount = 0;
+    }
+
+    public void SetupOrbs(bool random, int type)
+    {
+        ShootOrbs.Clear();
         for (int i = 0; i < QueueSize; i++)
         {
-            ShootOrbs.Enqueue(GetNextType());
+            int nextType = random ? GetNextType() : type;
+            ShootOrbs.Enqueue(nextType);
         }
 
         OnShootOrb?.Invoke(ShootOrbs.ToArray());
         OnSwapStore?.Invoke(StoredType, ShootOrbs.Peek(), true);
+    }
 
-        BulletsLeft = 4;
-        BulletRechargeAmount = 0;
+    public void CallOnSwapStore()
+    {
+        OnSwapStore?.Invoke(StoredType, ShootOrbs.Peek(), true);
     }
 
     void Update()
@@ -83,31 +102,16 @@ public class Player : MonoBehaviour
             }
         }
 
-        // Input
-        int delta = 0;
-        if (Input.GetKeyDown(Clockwise)) delta--;
-        if (Input.GetKeyDown(CounterClockwise)) delta++;
-
         var position = boardMover.Position;
 
-        if (delta != 0)
-        {
-            var newPosition = new RadialPosition(position.Lane + delta, 0);
-            if (BoardController.Instance.TryMove(boardMover, newPosition))
-            {
-                Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch(), MovementVolume);
-                sr.sprite = PlayerSprites[newPosition.Lane];
-            }
-            else
-            {
-                Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
-            }
-        }
+        // Input
+        if (MovementEnabled) KeyboardMovement();
+        //KeyboardMovement2();
 
         var pos = BoardController.Instance.GetMoverPosition(boardMover);
         int lastEmptySpace = BoardController.Instance.GetLastEmptySpace(pos.Lane);
 
-        if (Input.GetKeyDown(LaunchOrb))
+        if (Input.GetMouseButtonDown(0) && OrbShotEnabled)
         {
             if (lastEmptySpace == 0)
             {
@@ -122,7 +126,7 @@ public class Player : MonoBehaviour
             ShootOrbs.Enqueue(GetNextType());
             OnShootOrb?.Invoke(ShootOrbs.ToArray());
         }
-        else if (Input.GetKeyDown(Laser))
+        else if (Input.GetMouseButtonDown(1) && LaserEnabled)
         {
             if (BulletsLeft > 0)
             {
@@ -137,14 +141,14 @@ public class Player : MonoBehaviour
                 Factory.Instance.PlaySound(LaserClip, pitchVariance.GetRandomPitch(), LaserVolume);
             }
         }
-        else if (Input.GetKeyDown(SuperShot) && Charge == 8)
+        else if (Input.GetKeyDown(KeyCode.Space) && Charge == 8 && SupershotEnabled)
         {
             Charge = 0;
 
             Factory.Instance.CreateSuperShotLaser(position.Lane);
             Factory.Instance.CreateCampfireBlast();
             var movers = BoardController.Instance.GetLane(position.Lane).Where(x => x != null);
-            
+
             foreach (var mover in movers)
             {
                 if (mover.TryGetComponent<Orb>(out var orb))
@@ -160,10 +164,16 @@ public class Player : MonoBehaviour
                 {
                     orb.Shatter(0);
                 }
+
+                mover = BoardController.Instance.GetMover(new RadialPosition(i, 1));
+                if (mover != null && mover.TryGetComponent(out orb))
+                {
+                    orb.CheckForChain();
+                }
             }
         }
 
-        if (Input.GetKeyDown(Swap))
+        if (Input.GetKeyDown(KeyCode.E) && SwapEnabled)
         {
             int oldFront = ShootOrbs.Peek();
 
@@ -175,7 +185,7 @@ public class Player : MonoBehaviour
             }
 
             OnSwapStore?.Invoke(oldFront, StoredType, false);
-            
+
             StoredType = oldFront;
         }
     }
@@ -188,5 +198,112 @@ public class Player : MonoBehaviour
     public void ChargeGun(int chainLength)
     {
         Charge = Mathf.Min(Charge + Mathf.Max(chainLength - 2, 0), 8);
+        if (Charge == 8) OnSuperShotCharged?.Invoke();
     }
+
+    void KeyboardMovement()
+    {
+        var position = boardMover.Position;
+        int delta = 0;
+        if (Input.GetKeyDown(KeyCode.D)) delta--;
+        if (Input.GetKeyDown(KeyCode.A)) delta++;
+        if (delta != 0)
+        {
+            var newPosition = new RadialPosition(position.Lane + delta, 0);
+            if (BoardController.Instance.TryMove(boardMover, newPosition))
+            {
+                Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch(), MovementVolume);
+                sr.sprite = PlayerSprites[newPosition.Lane];
+                OnMove?.Invoke(newPosition);
+            }
+            else
+            {
+                Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
+            }
+        }
+    }
+
+    void KeyboardMovement2()
+    {
+        //var lane = boardMover.Position.Lane;
+
+        //const float DEADZONE = 0.3f;
+
+        //bool left = Input.GetKeyDown(KeyCode.A);
+        //bool right = Input.GetKeyDown(KeyCode.D);
+        //bool up = Input.GetKeyDown(KeyCode.W);
+        //bool down = Input.GetKeyDown(KeyCode.S);
+
+        //var delta = 0;
+
+        //if (lane == 3 || lane == 4 || lane == 5)
+        //{
+        //    if (up) delta--;
+        //    if (down) delta++;
+        //}
+
+        //if (lane == 7 || lane == 0 || lane == 1)
+        //{
+        //    if (up) delta++;
+        //    if (down) delta--;
+        //}
+
+        //if (lane == 5 || lane == 6 || lane == 7)
+        //{
+        //    if (left) delta--;
+        //    if (right) delta++;
+        //}
+
+        //if (lane == 1 || lane == 2 || lane == 3)
+        //{
+        //    if (left) delta++;
+        //    if (right) delta--;
+        //}
+
+        //if (delta == 0) return;
+        //var newPosition = new RadialPosition(lane + delta, 0);
+        //if (BoardController.Instance.TryMove(boardMover, newPosition))
+        //{
+        //    Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch(), MovementVolume);
+        //    sr.sprite = PlayerSprites[newPosition.Lane];
+        //}
+        //else
+        //{
+        //    Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
+        //}
+    }
+
+    void MouseMovement()
+    {
+        //var position = boardMover.Position;
+
+        //var worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //float angle = Mathf.Atan2(worldPoint.y, worldPoint.x) * Mathf.Rad2Deg;
+        //if (angle < 0) angle += 360;
+
+        //int currentLane = position.Lane;
+        //int targetLane = Mathf.FloorToInt((angle - 22.5f) / 45) + 1;
+
+        //if (currentLane == targetLane) return;
+
+        //int a = Mathf.Min(currentLane, targetLane);
+        //int b = Mathf.Max(currentLane, targetLane);
+        //int counterDistance = b - a;
+        //int clockDistance = a + 8 - b;
+
+        //bool clock = clockDistance < counterDistance;
+        //if (currentLane > targetLane) clock = !clock;
+
+        //var newPosition = new RadialPosition(position.Lane + (clock ? -1 : 1), 0);
+        //if (BoardController.Instance.TryMove(boardMover, newPosition))
+        //{
+        //    Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch(), MovementVolume);
+        //    sr.sprite = PlayerSprites[newPosition.Lane];
+        //}
+        //else
+        //{
+        //    Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
+        //}
+    }
+
 }

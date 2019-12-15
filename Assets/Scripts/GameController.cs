@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -19,12 +18,13 @@ public class GameController : MonoBehaviour
     public Image MusicImage;
     public EventSystem GameEventSystem;
     public StandaloneInputModule InputModule;
+    public TutorialController Tutorial;
 
     // Runtime
     int volumeLevel = 3;
     bool musicOn = true;
     List<float> StartingVolumes;
-
+    bool tutorialDone = false;
     public float GlobalVolume
     {
         get
@@ -53,28 +53,34 @@ public class GameController : MonoBehaviour
         {
             StartingVolumes.Add(source.volume);
         }
+
+        Tutorial.OnTutorialDone += TutorialDone;
     }
 
     public void StartGame()
     {
         BoardController.Instance.Clear();
-
-        Player.enabled = true;
-        WaveController.enabled = true;
-
+        
+        // Turn down ambient sounds
         foreach (var source in Sources)
         {
             source.volume = source.volume - .4f;
         }
 
-
-        MusicSource.Play();
-
+        Player.enabled = true;
         mainMenu = false;
         UpdateButtons();
-
+        
         GameEventSystem.enabled = true;
         InputModule.enabled = true;
+        
+        Tutorial.StartTutorial();
+    }
+
+    public void TutorialDone()
+    {
+        WaveController.enabled = true;
+        MusicSource.Play();
     }
 
     public void GoToMainMenu()

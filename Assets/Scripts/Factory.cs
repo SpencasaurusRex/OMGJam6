@@ -12,6 +12,7 @@ public class Factory : MonoBehaviour
     public Transform CampfireBlastPrefab;
 
     public Orb OrbPrefab;
+    public SpriteRenderer OrbSpawnPrefab;
 
     // Runtime
     public static Factory Instance { get; private set; }
@@ -21,17 +22,24 @@ public class Factory : MonoBehaviour
         Instance = this;
     }
 
-    public void CreateLaneOrb(int lane, int type)
+    public Orb CreateLaneOrb(int lane, int type, int position = BoardController.NUM_SPACES - 1)
     {
         var orb = Instantiate(OrbPrefab);
         orb.Type = type;
         orb.GetComponent<SpriteRenderer>().sprite = OrbSprites[type];
 
-        var radialPos = new RadialPosition(lane, BoardController.NUM_SPACES - 1);
+        var radialPos = new RadialPosition(lane, position);
         var boardMover = orb.GetComponent<BoardMover>();
         BoardController.Instance.AddMover(boardMover, radialPos);
 
         orb.transform.position = BoardController.Instance.GetPosition(radialPos);
+        return orb;
+    }
+
+    public void CreateOrbSpawnAnimation(Orb orb)
+    {
+        var spawn = Instantiate(OrbSpawnPrefab, orb.transform.position, Quaternion.identity);
+        spawn.color = OrbColors[orb.Type];
     }
 
     public void CreateLaunchOrb(int lane, Vector2 position, int type, int lastEmptySpace)

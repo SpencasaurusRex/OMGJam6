@@ -29,6 +29,9 @@ public class Orb : MonoBehaviour
     Animator animator;
     GameObject chainIndicator;
 
+    public delegate void Break();
+    public event Break OnBreak;
+
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -89,6 +92,8 @@ public class Orb : MonoBehaviour
 
         pitchMultiplier = Mathf.Pow(9f / 8, delayMultiplier);
         mover.Locked = true;
+
+        OnBreak?.Invoke();
 
         Destroy(chainIndicator);
     }
