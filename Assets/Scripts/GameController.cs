@@ -24,7 +24,6 @@ public class GameController : MonoBehaviour
     int volumeLevel = 3;
     bool musicOn = true;
     List<float> StartingVolumes;
-    bool tutorialDone = false;
     public float GlobalVolume
     {
         get
@@ -68,6 +67,7 @@ public class GameController : MonoBehaviour
         }
 
         Player.enabled = true;
+        Player.Setup();
         mainMenu = false;
         UpdateButtons();
         
@@ -79,6 +79,12 @@ public class GameController : MonoBehaviour
 
     public void TutorialDone()
     {
+        // Clear the board
+        BoardController.Instance.Clear();
+        // Reset player stats
+        Player.SetupOrbs(true, 0);
+        Player.Setup();
+
         WaveController.enabled = true;
         MusicSource.Play();
     }

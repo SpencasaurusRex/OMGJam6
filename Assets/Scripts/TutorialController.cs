@@ -9,6 +9,7 @@ public class TutorialController : MonoBehaviour
     TutorialState state = TutorialState.NotStarted;
     public List<SpriteRenderer> Wobbles;
     public GameObject TutorialPanel;
+    public GameObject TutorialSkip;
 
     public delegate void TutorialDone();
     public event TutorialDone OnTutorialDone;
@@ -52,6 +53,7 @@ public class TutorialController : MonoBehaviour
         TutorialText.text = "RIGHT CLICK TO FIRE THE LASER AND DESTROY ORBS";
 
         Player.SetupOrbs(false, 0);
+        TutorialSkip.SetActive(true);
     }
 
     public void ShootLaser()
@@ -66,6 +68,7 @@ public class TutorialController : MonoBehaviour
 
     void SetupChainShot()
     {
+        if (state == TutorialState.Done) return;
         Player.LaserEnabled = true;
         shotsLeft = 2;
         for (int i = 2; i < 4; i++)
@@ -89,6 +92,7 @@ public class TutorialController : MonoBehaviour
 
     void SetupOrbShoot()
     {
+        if (state == TutorialState.Done) return;
         TutorialText.text = "LEFT CLICK TO LAUNCH ORBS";
         for (int i = 4; i < 6; i++)
         {
@@ -102,13 +106,14 @@ public class TutorialController : MonoBehaviour
 
         state = TutorialState.OrbShoot;
         shotsLeft = 0;
-        orbsLeft = 2;
+        orbsLeft = 1;
         Player.LaserEnabled = false;
         Player.OrbShotEnabled = true;
     }
 
     void SetupSwap()
     {
+        if (state == TutorialState.Done) return;
         TutorialText.text = "PRESS E TO SWAP YOUR CURRENT ORB WITH YOUR STORED ORB";
         BoardController.Instance.TryMove(Player.GetComponent<BoardMover>(), new RadialPosition(2, 0));
         Player.GetComponent<SpriteRenderer>().sprite = Player.PlayerSprites[2];
@@ -134,9 +139,11 @@ public class TutorialController : MonoBehaviour
 
     void SetupSuperShotSetup()
     {
+        if (state == TutorialState.Done) return;
         TutorialText.text = "CHARGE YOUR SUPER LASER BY BREAKING ALL THE CHAINS";
         state = TutorialState.SuperShotSetup;
 
+        shotsLeft = 999;
         Player.LaserEnabled = true;
         Player.MovementEnabled = true;
         Player.OrbShotEnabled = false;
@@ -162,6 +169,7 @@ public class TutorialController : MonoBehaviour
 
     void SetupSuperShot()
     {
+        if (state != TutorialState.SuperShotSetup) return;
         state = TutorialState.SuperShot;
         TutorialText.text = "FIRE SUPER SHOT WITH SPACE TO DESTROY AN ENTIRE LANE";
 
@@ -214,18 +222,23 @@ public class TutorialController : MonoBehaviour
 
     public void FinalNote()
     {
+        if (state == TutorialState.Done) return;
+
         TutorialText.text = "YOU ARE NOW READY...";
         Invoke("FinalNote2", 4);
+        state = TutorialState.FinalNote;
     }
 
     public void FinalNote2()
     {
+        if (state == TutorialState.Done) return;
         TutorialText.text = "DON'T LET ORBS SURROUND THE FIRE. LEST IT FADE FOREVER...";
         Invoke("FinishTutorial", 6);
     }
 
     void SetupMovement()
     {
+        if (state == TutorialState.Done) return;
         TutorialText.text = "MOVE WITH A AND D";
         Player.MovementEnabled = true;
         Player.LaserEnabled = false;
@@ -312,12 +325,9 @@ public class TutorialController : MonoBehaviour
         TutorialPanel.SetActive(false);
 
         state = TutorialState.Done;
-        OnTutorialDone?.Invoke();
-    }
 
-    void Update()
-    {
-        if (state == TutorialState.Done) return;
+        TutorialSkip.SetActive(false);
+        OnTutorialDone?.Invoke();
     }
 
     enum TutorialState

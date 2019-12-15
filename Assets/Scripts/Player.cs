@@ -56,10 +56,9 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    void OnEnable()
+    public void Setup()
     {
-        ShootOrbs.Clear();
-
+        SetupOrbs(true, 0);
         boardMover.enabled = true;
 
         var startingPos = new RadialPosition(2, 0);
@@ -139,6 +138,8 @@ public class Player : MonoBehaviour
                 laser.player = this;
                 laser.TargetPosition = new RadialPosition(position.Lane, lastEmptySpace + 1);
                 Factory.Instance.PlaySound(LaserClip, pitchVariance.GetRandomPitch(), LaserVolume);
+
+                OnShootLaser?.Invoke();
             }
         }
         else if (Input.GetKeyDown(KeyCode.Space) && Charge == 8 && SupershotEnabled)
