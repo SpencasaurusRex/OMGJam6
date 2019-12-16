@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4578593136696358055}
   - component: {fileID: 60768757747277346}
   - component: {fileID: -4386339520133305627}
+  - component: {fileID: 1291916636}
   m_Layer: 0
   m_Name: Laser
   m_TagString: Untagged
@@ -51,6 +52,7 @@ MonoBehaviour:
     Lane: 0
     Position: 0
   Speed: 20
+  player: {fileID: 0}
 --- !u!95 &-4308921300868156595
 Animator:
   serializedVersion: 3
@@ -167,3 +169,42 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
+--- !u!114 &1291916636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2275719523878523349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LightType: 0
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0.69
+  m_Color: {r: 0.4292453, g: 1, b: 0.9720744, a: 1}
+  m_Intensity: 0.3
+  m_LightVolumeOpacity: 0
+  m_ApplyToSortingLayers: 55356e5400000000dfb1a93c197435bd
+  m_LightCookieSprite: {fileID: 0}
+  m_UseNormalMap: 0
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 0
+  m_PointLightOuterRadius: 1
+  m_PointLightDistance: 3
+  m_PointLightQuality: 1
+  m_ShapeLightParametricSides: 20
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 0.21
+  m_ShapeLightFalloffSize: 1.75
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: -0.5, y: 0.5, z: 0}

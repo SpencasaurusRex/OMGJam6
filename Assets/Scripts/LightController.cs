@@ -30,7 +30,7 @@ public class LightController : MonoBehaviour
 
     public void LightAmount(float amount)
     {
-        lightLeftTarget = Mathf.Max(Mathf.Min(amount * 1.75f, 1f), 0.2f);
+        lightLeftTarget = Mathf.Max(Mathf.Min(amount * 1.75f, 1f), 0.3f);
     }
 
     void Update()
@@ -44,8 +44,9 @@ public class LightController : MonoBehaviour
             randomAmount = Random.Range(0, RandomVariation);
         }
 
-        CampfireLight.pointLightOuterRadius = 
-            lightLeft * (startingRadius + Mathf.Sin(Time.realtimeSinceStartup * SinSpeed) * SinVariation + randomAmount);
-        CampfireLight.pointLightInnerRadius = startingInnerRadius * Mathf.Min(1f, lightLeft * 1.5f);
+        //float innerRadius = startingInnerRadius * Mathf.Min(1f, lightLeft * 1.5f);
+        float outerRadius = lightLeft * (startingRadius + Mathf.Sin(Time.realtimeSinceStartup * SinSpeed) * SinVariation + randomAmount);
+        
+        CampfireLight.transform.localScale = new Vector3(outerRadius / startingRadius, outerRadius / startingRadius, 1);
     }
 }

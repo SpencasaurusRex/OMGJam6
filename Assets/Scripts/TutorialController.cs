@@ -178,7 +178,7 @@ public class TutorialController : MonoBehaviour
         state = TutorialState.SuperShot;
         TutorialText.text = "FIRE SUPER SHOT WITH SPACE TO DESTROY AN ENTIRE LANE";
 
-        Player.SupershotEnabled = true;
+        Player.SupershotEnabled = Player.GetComponent<BoardMover>().Position.Lane == 1;
 
         for (int i = 1; i < BoardController.NUM_SPACES; i++)
         {
@@ -302,21 +302,28 @@ public class TutorialController : MonoBehaviour
 
     void CheckMovementDone(RadialPosition to)
     {
-        if (state != TutorialState.Movement) return;
-        if (movementStep == 0 && to.Lane == 4)
+        if (state == TutorialState.Movement)
         {
-            movementStep++;
+            if (movementStep == 0 && to.Lane == 4)
+            {
+                movementStep++;
+            }
+            else if (movementStep == 1 && to.Lane == 7)
+            {
+                movementStep++;
+            }
+            else if (movementStep == 2 && to.Lane == 5)
+            {
+                state = TutorialState.Swapping;
+                Invoke("SetupSwap", 1);
+            }
+            UpdateWobbleColor();
         }
-        else if (movementStep == 1 && to.Lane == 7)
+
+        if (state == TutorialState.SuperShot)
         {
-            movementStep++;
+            Player.SupershotEnabled = to.Lane == 1;
         }
-        else if (movementStep == 2 && to.Lane == 5)
-        {
-            state = TutorialState.Swapping;
-            Invoke("SetupSwap", 1);
-        }
-        UpdateWobbleColor();
     }
 
     public void FinishTutorial()
