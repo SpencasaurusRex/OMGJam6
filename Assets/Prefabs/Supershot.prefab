@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5325916007597300885}
   - component: {fileID: 5325916007597300886}
   - component: {fileID: 5325916007597300883}
+  - component: {fileID: 1236877339}
   m_Layer: 0
   m_Name: Supershot
   m_TagString: Untagged
@@ -99,8 +100,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1017754079
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 60841892739309509, guid: 28b6cd37becce4149801d0a78686daf9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -113,3 +114,42 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1236877339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5325916007597300887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LightType: 1
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0.51
+  m_Color: {r: 0.7688679, g: 0.9840486, b: 1, a: 1}
+  m_Intensity: 0.66
+  m_LightVolumeOpacity: 0
+  m_ApplyToSortingLayers: 55356e5400000000197435bd
+  m_LightCookieSprite: {fileID: 0}
+  m_UseNormalMap: 0
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 1
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 0
+  m_PointLightOuterRadius: 1
+  m_PointLightDistance: 3
+  m_PointLightQuality: 1
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 1.17
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.088170774, y: 0.0927872, z: 0}
+  - {x: 0.17552753, y: 0.086546086, z: 0}
+  - {x: 0.1650632, y: 23.630085, z: 0}
+  - {x: -0.107836604, y: 23.611448, z: 0}

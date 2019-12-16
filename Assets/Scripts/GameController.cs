@@ -86,6 +86,8 @@ public class GameController : MonoBehaviour
         
         Tutorial.StartTutorial();
         ScoreController.Instance.StartGame();
+
+        LightController.Instance.LightAmount(1);
     }
 
     public void TutorialDone()
@@ -171,8 +173,8 @@ public class GameController : MonoBehaviour
 
     public void UpdateButtons()
     {
-        VolumeImage.sprite = VolumeSprites[volumeLevel + (mainMenu ? 4 : 0)];
-        MusicImage.sprite = MusicSprites[(musicOn ? 0 : 1) + (mainMenu ? 2 : 0)];
+        VolumeImage.sprite = VolumeSprites[volumeLevel + 4];
+        MusicImage.sprite = MusicSprites[(musicOn ? 0 : 1) + 2];
         PauseButton.sprite = paused ? PlaySprite : PauseSprite;
     }
 

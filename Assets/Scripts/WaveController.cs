@@ -115,6 +115,8 @@ public class WaveController : MonoBehaviour
             }
         }
 
+        LightController.Instance.LightAmount(SpacesLeft / (float)TOTAL_SPACES);
+
         if (SpacesLeft <= 1)
         {
             GameController.Instance.EndGame();

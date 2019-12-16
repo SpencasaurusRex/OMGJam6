@@ -1,13 +1,11 @@
 ﻿using TMPro;
 using UnityEngine;
-using UnityEngine.Experimental.PlayerLoop;
 
 public class ScoreController : MonoBehaviour
 {
     // Configuration
     public int BaseOrbScore;
     public int ChainAddition;
-    public int SuperShotAddition;
     public TextMeshProUGUI ScoreText;
 
     // Runtime
@@ -24,7 +22,7 @@ public class ScoreController : MonoBehaviour
     public void StartGame()
     {
         CurrentScore = 0;
-        ScoreText.color = Color.black;
+        ScoreText.color = Color.white;
         UpdateText();
     }
 

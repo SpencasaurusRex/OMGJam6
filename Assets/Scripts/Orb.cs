@@ -31,7 +31,7 @@ public class Orb : MonoBehaviour
 
     public delegate void Break();
     public event Break OnBreak;
-
+    bool shatterSound = true;
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -59,7 +59,7 @@ public class Orb : MonoBehaviour
                 BoardController.Instance.RemoveMover(mover);
                 ShatteringAnimation = true;
                 animator.enabled = true;
-                Factory.Instance.PlaySound(ShatterSound, pitchMultiplier);
+                if (shatterSound) Factory.Instance.PlaySound(ShatterSound, pitchMultiplier);
             }
         }
     }
@@ -85,7 +85,7 @@ public class Orb : MonoBehaviour
         }
     }
 
-    public void Shatter(int delayMultiplier)
+    public void Shatter(int delayMultiplier, bool sound = true)
     {
         Shattering = true;
         ShatterCountdown = delayMultiplier * BreakDelayAdd;
@@ -94,6 +94,7 @@ public class Orb : MonoBehaviour
         mover.Locked = true;
 
         OnBreak?.Invoke();
+        shatterSound = sound;
 
         Destroy(chainIndicator);
     }

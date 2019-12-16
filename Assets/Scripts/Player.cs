@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     public AudioClip MovementClip;
     public AudioClip LaserClip;
     public AudioClip BlockedClip;
+    public AudioClip SuperShotClip;
+    public AudioSource SuperShotDrone;
     public float BulletRechargeTime;
     public List<Sprite> PlayerSprites;
 
@@ -127,9 +129,9 @@ public class Player : MonoBehaviour
             ShootOrbs.Enqueue(GetNextType());
             OnShootOrb?.Invoke(ShootOrbs.ToArray());
         }
-        else if (Input.GetMouseButtonDown(1) && LaserEnabled)
+        else if (Input.GetMouseButtonDown(1))
         {
-            if (BulletsLeft > 0)
+            if (LaserEnabled && BulletsLeft > 0)
             {
                 BulletsLeft--;
 
@@ -143,14 +145,20 @@ public class Player : MonoBehaviour
 
                 OnShootLaser?.Invoke();
             }
+            else
+            {
+                Factory.Instance.PlaySound(BlockedClip, 1.3f, 0.5f);
+            }
         }
         else if (Input.GetKeyDown(KeyCode.Space) && Charge == 8 && SupershotEnabled)
         {
+            SuperShotDrone.Stop();
             Charge = 0;
             BulletsLeft = Mathf.Min(BulletsLeft + 1, 4);
 
             Factory.Instance.CreateSuperShotLaser(position.Lane);
             Factory.Instance.CreateCampfireBlast();
+            Factory.Instance.PlaySound(SuperShotClip, 1, 0.5f);
             var movers = BoardController.Instance.GetLane(position.Lane).Where(x => x != null);
 
             int orbCount = 0;
@@ -158,7 +166,7 @@ public class Player : MonoBehaviour
             {
                 if (mover.TryGetComponent<Orb>(out var orb))
                 {
-                    orb.Shatter(0);
+                    orb.Shatter(0, false);
                     ScoreController.Instance.OrbBreak(orbCount++);
                 }
             }
@@ -169,7 +177,7 @@ public class Player : MonoBehaviour
                 var mover = BoardController.Instance.GetMover(new RadialPosition(i, 0));
                 if (mover != null && mover.TryGetComponent<Orb>(out var orb))
                 {
-                    orb.Shatter(0);
+                    orb.Shatter(0, false);
                     ScoreController.Instance.OrbBreak(0);
                 }
 
@@ -206,7 +214,11 @@ public class Player : MonoBehaviour
     public void ChargeGun(int chainLength)
     {
         Charge = Mathf.Min(Charge + Mathf.Max(chainLength - 2, 0), 8);
-        if (Charge == 8) OnSuperShotCharged?.Invoke();
+        if (Charge == 8)
+        {
+            SuperShotDrone.Play();
+            OnSuperShotCharged?.Invoke();
+        }
     }
 
     void KeyboardMovement()
@@ -229,89 +241,6 @@ public class Player : MonoBehaviour
                 Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
             }
         }
-    }
-
-    void KeyboardMovement2()
-    {
-        //var lane = boardMover.Position.Lane;
-
-        //const float DEADZONE = 0.3f;
-
-        //bool left = Input.GetKeyDown(KeyCode.A);
-        //bool right = Input.GetKeyDown(KeyCode.D);
-        //bool up = Input.GetKeyDown(KeyCode.W);
-        //bool down = Input.GetKeyDown(KeyCode.S);
-
-        //var delta = 0;
-
-        //if (lane == 3 || lane == 4 || lane == 5)
-        //{
-        //    if (up) delta--;
-        //    if (down) delta++;
-        //}
-
-        //if (lane == 7 || lane == 0 || lane == 1)
-        //{
-        //    if (up) delta++;
-        //    if (down) delta--;
-        //}
-
-        //if (lane == 5 || lane == 6 || lane == 7)
-        //{
-        //    if (left) delta--;
-        //    if (right) delta++;
-        //}
-
-        //if (lane == 1 || lane == 2 || lane == 3)
-        //{
-        //    if (left) delta++;
-        //    if (right) delta--;
-        //}
-
-        //if (delta == 0) return;
-        //var newPosition = new RadialPosition(lane + delta, 0);
-        //if (BoardController.Instance.TryMove(boardMover, newPosition))
-        //{
-        //    Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch(), MovementVolume);
-        //    sr.sprite = PlayerSprites[newPosition.Lane];
-        //}
-        //else
-        //{
-        //    Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
-        //}
-    }
-
-    void MouseMovement()
-    {
-        //var position = boardMover.Position;
-
-        //var worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //float angle = Mathf.Atan2(worldPoint.y, worldPoint.x) * Mathf.Rad2Deg;
-        //if (angle < 0) angle += 360;
-
-        //int currentLane = position.Lane;
-        //int targetLane = Mathf.FloorToInt((angle - 22.5f) / 45) + 1;
-
-        //if (currentLane == targetLane) return;
-
-        //int a = Mathf.Min(currentLane, targetLane);
-        //int b = Mathf.Max(currentLane, targetLane);
-        //int counterDistance = b - a;
-        //int clockDistance = a + 8 - b;
-
-        //bool clock = clockDistance < counterDistance;
-        //if (currentLane > targetLane) clock = !clock;
-
-        //var newPosition = new RadialPosition(position.Lane + (clock ? -1 : 1), 0);
-        //if (BoardController.Instance.TryMove(boardMover, newPosition))
-        //{
-        //    Factory.Instance.PlaySound(MovementClip, pitchVariance.GetRandomPitch(), MovementVolume);
-        //    sr.sprite = PlayerSprites[newPosition.Lane];
-        //}
-        //else
-        //{
-        //    Factory.Instance.PlaySound(BlockedClip, pitchVariance.GetRandomPitch(), BlockedVolume);
-        //}
     }
 
 }
